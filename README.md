@@ -9,11 +9,17 @@
 ### Setup
 1. Installed required software
 2. Clone repository
-    `git clone https://github.com/jonrkarr/SynNetGen.git`
+
+    ```
+    git clone https://github.com/jonrkarr/SynNetGen.git
+    ```
 3. Change to /path/to/SynNetGen
 4. Open MALTAB
 5. Run installer
-    `install();`
+
+    ```
+    install();
+    ```
     
 ## Getting started
 
