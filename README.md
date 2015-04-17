@@ -27,10 +27,10 @@
 
 ### Generators
 * Graphs
-  * Barabasi-Albert
-  * Edgar-Gilbert
-  * Erdos-Reyni
-  * Watts-Strogatz
+  * Barabasi-Albert (n, m)
+  * Edgar-Gilbert (n, p)
+  * Erdos-Reyni (n, m)
+  * Watts-Strogatz (n, p, k)
 
 ### File formats
 Format  | Extension | Type  | Input | Output
