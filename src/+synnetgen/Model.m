@@ -57,16 +57,19 @@ classdef Model < handle
     end
     
     methods (Abstract)
-        %Generates random model using various generators.
+        %Generates random model using various generators
         result = generate(this, extId, varargin)
         
-        %Transforms model using various transforms.
+        %Transforms model using various transforms
         result = transform(this, extId, varargin)
         
-        %Imports model from various file formats.
+        %Converts model using various algorithms
+        result = convert(this, extId, varargin)
+        
+        %Imports model from various file formats
         result = import(this, extId, varargin)
         
-        %Exports model to various file formats.
+        %Exports model to various file formats
         result = export(this, extId, varargin)
     end
 end

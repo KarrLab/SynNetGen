@@ -344,6 +344,14 @@ classdef Graph < synnetgen.Model
             result = synnetgen.extension.ExtensionRunner.run('synnetgen.graph.transform', extId, this, varargin{:});
         end
         
+        function result = convert(this, extId, varargin)
+            %Converts graph to other types of models using various
+            %algorithms. See synnetgen.graph.transform for supported
+            %algorithms and their options.
+            
+            result = synnetgen.extension.ExtensionRunner.run('synnetgen.graph.convert', extId, this, varargin{:});
+        end
+        
         function result = export(this, extId, varargin)
             %Exports graph to various formats. See synnetgen.graph.exporter
             %for supported formats.
