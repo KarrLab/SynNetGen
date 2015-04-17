@@ -7,7 +7,6 @@ classdef GraphMLExporter < synnetgen.extension.Extension
         id = 'graphml'
         description = 'GraphML graph exporter'
         inputs = struct(...
-            'graph', 'Graph', ...
             'filename', 'File name' ...
             )
         outputs = struct (...
@@ -16,13 +15,11 @@ classdef GraphMLExporter < synnetgen.extension.Extension
     end
     
     methods (Static)
-        function status = run(varargin)
+        function status = run(graph, varargin)
             %parse arguments
             ip = inputParser;
-            ip.addParameter('graph', []);
             ip.addParameter('filename', []);
             ip.parse(varargin{:});
-            graph = ip.Results.graph;
             filename = ip.Results.filename;
             
             if isempty(graph)
@@ -60,7 +57,7 @@ classdef GraphMLExporter < synnetgen.extension.Extension
             
             for iNode = 1:numel(graph.nodes)
                 nodeXML = doc.createElement('node');
-                nodeXML.setAttribute('id', graph.nodes(iNode).name);
+                nodeXML.setAttribute('id', graph.nodes(iNode).id);
                 graphXML.appendChild(nodeXML);
                 
                 label = doc.createElement('data');
@@ -74,8 +71,8 @@ classdef GraphMLExporter < synnetgen.extension.Extension
             for iEdge = 1:numel(iFrom)
                 edgeXML = doc.createElement('edge');
                 edgeXML.setAttribute('id', sprintf('edge-%d', iEdge));
-                edgeXML.setAttribute('source', graph.nodes(iFrom(iEdge)).name);
-                edgeXML.setAttribute('target', graph.nodes(iTo(iEdge)).name);
+                edgeXML.setAttribute('source', graph.nodes(iFrom(iEdge)).id);
+                edgeXML.setAttribute('target', graph.nodes(iTo(iEdge)).id);
                 graphXML.appendChild(edgeXML);
                 
                 sign = doc.createElement('data');

@@ -8,22 +8,22 @@
 %  - isequal, eq
 %  - disp, print, plot
 %- Static methods
-%  - sample: from one of several distributions
-%  - import:
-%  - export:
+%  - generate: from one of several distributions
+%  - import: from one of several file formats
+%  - export: to one of several file formats
 %
 %@author  Jonathan Karr, karr@mssm.edu
 %@date    2015-04-15
-classdef Graph < handle
+classdef Graph < synnetgen.Model
     properties (SetAccess = protected)
-        nodes %array of nodes. Each node is represented by a struct with two fields name and label
+        nodes %array of nodes. Each node is represented by a struct with two fields id and label
         edges %adjancency matrix representing directed edges and their signs. Rows represent parents. Columns represent children
     end
     
     methods
         function this = Graph(nodes, edges)
             if nargin < 1
-                nodes = repmat(struct('name', '', 'label', ''), 0, 1);
+                nodes = repmat(struct('id', '', 'label', ''), 0, 1);
             end
             if nargin < 2
                 edges = zeros(numel(nodes));
@@ -35,14 +35,16 @@ classdef Graph < handle
     
     methods
         function this = setNodesAndEdges(this, nodes, edges)
+            %set nodes and edges
+            
             validateattributes(nodes, {'struct'}, {'column'})
-            if ~isequal(sort(fieldnames(nodes)), sort({'name'; 'label'}))
-                throw(MException('SynNetGen:InvalidArgument', 'Nodes must be struct with two fields name and label'));
+            if ~isequal(sort(fieldnames(nodes)), sort({'id'; 'label'}))
+                throw(MException('SynNetGen:InvalidArgument', 'Nodes must be struct with two fields id and label'));
             end
-            if ~all(cellfun(@(x) ischar(x) && isrow(x) && ~isempty(x), {nodes.name}))
-                throw(MException('SynNetGen:InvalidArgument', 'Names must be non-empty strings'));
+            if ~all(cellfun(@this.isNodeIdValid, {nodes.id}))
+                throw(MException('SynNetGen:InvalidArgument', 'Ids must be non-empty strings'));
             end
-            if ~all(cellfun(@(x) ischar(x) && isrow(x), {nodes.label}))
+            if ~all(cellfun(@this.isNodeLabelValid, {nodes.label}))
                 throw(MException('SynNetGen:InvalidArgument', 'Labels must be strings'));
             end
             
@@ -61,37 +63,39 @@ classdef Graph < handle
         
         function this = setNodes(this, nodes)
             validateattributes(nodes, {'struct'}, {'column'})
-            if ~isequal(sort(fieldnames(nodes)), sort({'name'; 'label'}))
-                throw(MException('SynNetGen:InvalidArgument', 'Nodes must be struct with two fields name and label'));
+            if ~isequal(sort(fieldnames(nodes)), sort({'id'; 'label'}))
+                throw(MException('SynNetGen:InvalidArgument', 'Nodes must be struct with two fields id and label'));
             end
-            if ~all(cellfun(@(x) ischar(x) && isrow(x) && ~isempty(x), {nodes.name}))
-                throw(MException('SynNetGen:InvalidArgument', 'Names must be non-empty strings'));
+            if ~all(cellfun(@this.isNodeIdValid, {nodes.id}))
+                throw(MException('SynNetGen:InvalidArgument', 'Ids must be non-empty strings'));
             end
-            if ~all(cellfun(@(x) ischar(x) && isrow(x), {nodes.label}))
+            if ~all(cellfun(@this.isNodeLabelValid, {nodes.label}))
                 throw(MException('SynNetGen:InvalidArgument', 'Labels must be strings'));
             end
             
             this.nodes = nodes;
         end
         
-        function this = addNode(this, name, label)
-            %Adds node with name and label to graph
+        function this = addNode(this, id, label)
+            %Adds node with id and label to graph
             
             %% validate arguments
             
-            %name is non-empty unique string
-            validateattributes(name, {'char'}, {'nonempty', 'row'});
-            if any(strcmp({this.nodes.name}, name))
-                throw(MException('SynNetGen:InvalidNodeName', 'Invalid node name ''%s''', name))
+            %id is non-empty unique string
+            validateattributes(id, {'char'}, {'nonempty', 'row'});
+            if ~this.isNodeIdValid(id) || any(strcmp({this.nodes.id}, id))
+                throw(MException('SynNetGen:InvalidNodeId', 'Invalid node id ''%s''', id))
             end
             
             %label is string
-            validateattributes(label, {'char'}, {'row'});
+            if ~this.isNodeLabelValid(label)
+                throw(MException('SynNetGen:InvalidNodeLabel', 'Invalid node label ''%s''', label))
+            end
             
             %% add node to network
             this.nodes = [
                 this.nodes
-                struct('name', name, 'label', label)
+                struct('id', id, 'label', label)
                 ];
             this.edges = [
                 this.edges zeros(numel(this.nodes)-1, 1)
@@ -99,17 +103,17 @@ classdef Graph < handle
                 ];
         end
         
-        function this = removeNode(this, name)
-            %Removes node with name from graph
+        function this = removeNode(this, id)
+            %Removes node with id from graph
             
             %% validate arguments
-            %name is non-empty string
-            validateattributes(name, {'char'}, {'nonempty', 'row'});
+            %id is non-empty string
+            validateattributes(id, {'char'}, {'nonempty', 'row'});
             
-            %node with name exists
-            isNode = strcmp({this.nodes.name}, name);
+            %node with id exists
+            isNode = strcmp({this.nodes.id}, id);
             if ~any(isNode)
-                throw(MException('SynNetGen:NodeDoesNotExist', 'Node with name ''%s'' does not exist', name))
+                throw(MException('SynNetGen:NodeDoesNotExist', 'Node with id ''%s'' does not exist', id))
             end
             
             %% remove node
@@ -127,28 +131,28 @@ classdef Graph < handle
             this.edges = edges;
         end
         
-        function this = addEdge(this, fromNodeName, toNodeName, sign)
-            %Adds edge from node fromNodeName to node toNodeName with
+        function this = addEdge(this, fromNodeId, toNodeId, sign)
+            %Adds edge from node fromNodeId to node toNodeId with
             %specified sign {-1, 1}
             
             %% validate arguments
-            %node with name fromNodeName exists
-            validateattributes(fromNodeName, {'char'}, {'nonempty', 'row'});
-            iFromNode = find(strcmp({this.nodes.name}, fromNodeName), 1, 'first');
+            %node with id fromNodeId exists
+            validateattributes(fromNodeId, {'char'}, {'nonempty', 'row'});
+            iFromNode = find(strcmp({this.nodes.id}, fromNodeId), 1, 'first');
             if isempty(iFromNode)
-                throw(MException('SynNetGen:NodeDoesNotExist', 'Node with name ''%s'' does not exist', fromNodeName))
+                throw(MException('SynNetGen:NodeDoesNotExist', 'Node with id ''%s'' does not exist', fromNodeId))
             end
             
-            %node with name toNodeName exists
-            validateattributes(toNodeName, {'char'}, {'nonempty', 'row'});
-            iToNode = find(strcmp({this.nodes.name}, toNodeName), 1, 'first');
+            %node with id toNodeId exists
+            validateattributes(toNodeId, {'char'}, {'nonempty', 'row'});
+            iToNode = find(strcmp({this.nodes.id}, toNodeId), 1, 'first');
             if isempty(iToNode)
-                throw(MException('SynNetGen:NodeDoesNotExist', 'Node with name ''%s'' does not exist', toNodeName))
+                throw(MException('SynNetGen:NodeDoesNotExist', 'Node with id ''%s'' does not exist', toNodeId))
             end
             
             %edge doesn't already exist
             if this.edges(iFromNode, iToNode)
-                throw(MException('SynNetGen:EdgeAlreadyExists', 'Edge already exists from ''%s'' to ''%s''', fromNodeName, toNodeName))
+                throw(MException('SynNetGen:EdgeAlreadyExists', 'Edge already exists from ''%s'' to ''%s''', fromNodeId, toNodeId))
             end
             
             %edge has valid sign
@@ -158,28 +162,28 @@ classdef Graph < handle
             this.edges(iFromNode, iToNode) = sign;
         end
         
-        function this = removeEdge(this, fromNodeName, toNodeName)
-            %Removes edge from node fromNodeName to node toNodeName
+        function this = removeEdge(this, fromNodeId, toNodeId)
+            %Removes edge from node fromNodeId to node toNodeId
             
             %% validate arguments
             
-            %node with name fromNodeName exists
-            validateattributes(fromNodeName, {'char'}, {'nonempty', 'row'});
-            iFromNode = find(strcmp({this.nodes.name}, fromNodeName), 1, 'first');
+            %node with id fromNodeId exists
+            validateattributes(fromNodeId, {'char'}, {'nonempty', 'row'});
+            iFromNode = find(strcmp({this.nodes.id}, fromNodeId), 1, 'first');
             if isempty(iFromNode)
-                throw(MException('SynNetGen:NodeDoesNotExist', 'Node with name ''%s'' does not exist', fromNodeName))
+                throw(MException('SynNetGen:NodeDoesNotExist', 'Node with id ''%s'' does not exist', fromNodeId))
             end
             
-            %node with name toNodeName exists
-            validateattributes(toNodeName, {'char'}, {'nonempty', 'row'});
-            iToNode = find(strcmp({this.nodes.name}, toNodeName), 1, 'first');
+            %node with id toNodeId exists
+            validateattributes(toNodeId, {'char'}, {'nonempty', 'row'});
+            iToNode = find(strcmp({this.nodes.id}, toNodeId), 1, 'first');
             if isempty(iToNode)
-                throw(MException('SynNetGen:NodeDoesNotExist', 'Node with name ''%s'' does not exist', toNodeName))
+                throw(MException('SynNetGen:NodeDoesNotExist', 'Node with id ''%s'' does not exist', toNodeId))
             end
             
             %edge already exists
             if ~this.edges(iFromNode, iToNode)
-                throw(MException('SynNetGen:EdgeDoesNotExist', 'Edge does not exist from ''%s'' to ''%s''', fromNodeName, toNodeName))
+                throw(MException('SynNetGen:EdgeDoesNotExist', 'Edge does not exist from ''%s'' to ''%s''', fromNodeId, toNodeId))
             end
             
             %% remove edge
@@ -188,66 +192,31 @@ classdef Graph < handle
     end
     
     methods
-        function this = randomizeDirectionality(this, p)
-            if nargin < 2
-                p = 0.5;
-            end
-            
-            [iFrom, iTo, signs] = find(this.edges);
-            flip = rand(size(iFrom)) < p;
-            iFrom2 = iFrom;
-            iTo2 = iTo;
-            iFrom2(flip) = iTo(flip);
-            iTo2(flip) = iFrom(flip);
-            
-            edges = zeros(size(this.edges));
-            edges(sub2ind(size(this.edges), iFrom2, iTo2)) = signs; 
-            
-            this.edges = edges;
-        end
-        
-        function this = removeDirectionality(this)
-            this.edges = triu(this.edges) + triu(this.edges)' - diag(diag(this.edges));
-        end
-        
-        function this = randomizeSigns(this, p)
-            if nargin < 2
-                p = 0.5;
-            end
-            this.edges = (this.edges ~= 0) .* (2 * (rand(size(this.edges)) < p) - 1);
-        end
-        
-        function this = removeSigns(this)
-            this.edges = abs(this.edges);
-        end
-    end
-    
-    methods
-        function tf = isequal(g, h)
+        function tf = isequal(this, that)
             %Test if graphs are equal
             
-            %h is graph
-            if ~isa(h, class(g))
-                tf = false;
-                return;
-            end
-                
-            %same number nodes
-            if ~isequal(numel(g.nodes), numel(h.nodes))
+            %that is graph
+            if ~isa(that, class(this))
                 tf = false;
                 return;
             end
             
-            %same node names and labels
-            [nodeNameLabelsG, iRowsG] = sortrows([{g.nodes.name}' {g.nodes.label}']);
-            [nodeNameLabelsH, iRowsH] = sortrows([{h.nodes.name}' {h.nodes.label}']);
-            if ~isequal(nodeNameLabelsG, nodeNameLabelsH)
+            %same number nodes
+            if ~isequal(numel(this.nodes), numel(that.nodes))
+                tf = false;
+                return;
+            end
+            
+            %same node ids and labels
+            [nodeIdLabelsThis, iRowsThis] = sortrows([{this.nodes.id}' {this.nodes.label}']);
+            [nodeIdLabelsThat, iRowsThat] = sortrows([{that.nodes.id}' {that.nodes.label}']);
+            if ~isequal(nodeIdLabelsThis, nodeIdLabelsThat)
                 tf = false;
                 return;
             end
             
             %same edges
-            if ~isequal(g.edges(iRowsG, iRowsG), h.edges(iRowsH, iRowsH))
+            if ~isequal(this.edges(iRowsThis, iRowsThis), that.edges(iRowsThat, iRowsThat))
                 tf = false;
                 return;
             end
@@ -255,34 +224,30 @@ classdef Graph < handle
             %if all tests pass, return true
             tf = true;
         end
-        
-        function tf = eq(g, h)
-           %Test if graphs are equal
+    end
+    
+    methods
+        function this = clear(this)
+            %clear nodes and edges
             
-           tf = isequal(g, h); 
-        end
-    end
-    
-    methods
-        function h = copy(g)
-            h = synnetgen.graph.Graph();
-            h.setNodesAndEdges(g.nodes, g.edges);
-        end
-    end
-    
-    methods
-        function this = disp(this)
-            %Display graph in command window
-            str = this.print();
-            for iLine = 1:numel(str)
-                fprintf('%s\n', str{iLine});
-            end
+            this.nodes = repmat(struct('id', [], 'label', []), 0, 1);
+            this.edges = zeros(0);
         end
         
+        function that = copy(this)
+            %Create copy of graph
+            
+            that = synnetgen.graph.Graph(this.nodes, this.edges);
+        end
+    end
+    
+    methods
         function str = print(this)
+            %Display graph in command window
+            
             str = cell(0, 1);
             
-            str = [str 
+            str = [str
                 sprintf('Signed, directed graph with %d nodes and %d edges', numel(this.nodes), nnz(this.edges))
                 ];
             
@@ -293,7 +258,7 @@ classdef Graph < handle
             for iNode = 1:numel(this.nodes)
                 str = [
                     str
-                    sprintf('    %s: %s', this.nodes(iNode).name, this.nodes(iNode).label)
+                    sprintf('    %s: %s', this.nodes(iNode).id, this.nodes(iNode).label)
                     ];
             end
             
@@ -310,12 +275,12 @@ classdef Graph < handle
                 end
                 str = [
                     str
-                    sprintf('    %s --%s %s', this.nodes(iFrom(iEdge)).name, sign, this.nodes(iTo(iEdge)).name)
+                    sprintf('    %s --%s %s', this.nodes(iFrom(iEdge)).id, sign, this.nodes(iTo(iEdge)).id)
                     ];
             end
         end
         
-        function h = plot(this, varargin)
+        function figHandle = plot(this, varargin)
             %Generates plot of graph
             %  Options:
             %  - layout: see graphviz4matlab\layouts
@@ -329,45 +294,54 @@ classdef Graph < handle
             nodeColors = ip.Results.nodeColors;
             
             [iFrom, iTo] = find(this.edges);
-            edgeLabels = [{this.nodes(iFrom).name}' {this.nodes(iTo).name}' cell(numel(iFrom), 1)];
-            edgeColors = [{this.nodes(iFrom).name}' {this.nodes(iTo).name}' cell(numel(iFrom), 1)];
+            edgeLabels = [{this.nodes(iFrom).id}' {this.nodes(iTo).id}' cell(numel(iFrom), 1)];
+            edgeColors = [{this.nodes(iFrom).id}' {this.nodes(iTo).id}' cell(numel(iFrom), 1)];
             edgeLabels(this.edges(find(this.edges)) ==  1, 3) = {'+'};
             edgeLabels(this.edges(find(this.edges)) == -1, 3) = {'-'};
             edgeColors(this.edges(find(this.edges)) ==  1, 3) = {'k'};
             edgeColors(this.edges(find(this.edges)) == -1, 3) = {'r'};
             
-            h = graphViz4Matlab(...
-                '-nodeLabels', {this.nodes.name}', ...
+            result = graphViz4Matlab(...
+                '-nodeLabels', {this.nodes.id}', ...
                 '-nodeDescriptions', {this.nodes.label}', ...
                 '-adjMat', this.edges, ...
                 '-edgeLabels', edgeLabels, ...
                 '-edgeColors', edgeColors, ...
                 '-nodeColors', nodeColors, ...
                 '-layout', layout());
+            figHandle = result.fig;
         end
     end
     
-    methods (Static = true)
-        function result = generate(extName, varargin)
+    methods
+        function this = generate(this, extId, varargin)
             %Generates random graph using various generators. See
             %synnetgen.graph.generator for supported algorithms and their
             %options.
             
-            result = synnetgen.extension.ExtensionRunner.run('synnetgen.graph.generator', extName, varargin{:});
+            synnetgen.extension.ExtensionRunner.run('synnetgen.graph.generator', extId, this, varargin{:});
         end
         
-        function result = import(extName, varargin)
-            %Imports graphs from various formats. See synnetgen.graph.importer
-            %for supported formats.
+        function result = transform(this, extId, varargin)
+            %Transforms graph using various transform. See
+            %synnetgen.graph.transform for supported algorithms and their
+            %options.
             
-            result = synnetgen.extension.ExtensionRunner.run('synnetgen.graph.importer', extName, varargin{:});
+            result = synnetgen.extension.ExtensionRunner.run('synnetgen.graph.transform', extId, this, varargin{:});
         end
         
-        function result = export(extName, varargin)
+        function result = export(this, extId, varargin)
             %Exports graph to various formats. See synnetgen.graph.exporter
             %for supported formats.
             
-            result = synnetgen.extension.ExtensionRunner.run('synnetgen.graph.exporter', extName, varargin{:});
+            result = synnetgen.extension.ExtensionRunner.run('synnetgen.graph.exporter', extId, this, varargin{:});
+        end
+        
+        function this = import(this, extId, varargin)
+            %Imports graphs from various formats. See synnetgen.graph.importer
+            %for supported formats.
+            
+            synnetgen.extension.ExtensionRunner.run('synnetgen.graph.importer', extId, this, varargin{:});
         end
     end
 end

@@ -20,6 +20,11 @@ classdef ExtensionRunnerTest < matlab.unittest.TestCase
             synnetgen.extension.ExtensionRunner.get('synnetgen.graph.generator', 'watts-strogatz');
             
             synnetgen.extension.ExtensionRunner.get('synnetgen.graph.importer', 'tgf');
+            
+            synnetgen.extension.ExtensionRunner.get('synnetgen.graph.transform', 'RandomizeDirections');
+            synnetgen.extension.ExtensionRunner.get('synnetgen.graph.transform', 'RandomizeSigns');
+            synnetgen.extension.ExtensionRunner.get('synnetgen.graph.transform', 'RemoveDirections');
+            synnetgen.extension.ExtensionRunner.get('synnetgen.graph.transform', 'RemoveSigns');
         end
         
         function testList(this)

@@ -25,9 +25,9 @@ classdef GraphTest < matlab.unittest.TestCase
             
             h = Graph();
             h.setNodesAndEdges([
-                struct('name', 'a', 'label', 'A')
-                struct('name', 'b', 'label', 'B')
-                struct('name', 'c', 'label', 'C')
+                struct('id', 'a', 'label', 'A')
+                struct('id', 'b', 'label', 'B')
+                struct('id', 'c', 'label', 'C')
                 ], [0 1 0; 0 0 0; 0 0 -1]);
             
             this.verifyEqual(g, h);
@@ -39,28 +39,28 @@ classdef GraphTest < matlab.unittest.TestCase
             g = Graph();
             
             g.addNode('a', 'A');
-            this.verifyEqual(struct('name', 'a', 'label', 'A'), g.nodes);
+            this.verifyEqual(struct('id', 'a', 'label', 'A'), g.nodes);
             this.verifyEqual(zeros(1), g.edges);
             
             g.addNode('b', 'B');
             this.verifyEqual([
-                struct('name', 'a', 'label', 'A')
-                struct('name', 'b', 'label', 'B')
+                struct('id', 'a', 'label', 'A')
+                struct('id', 'b', 'label', 'B')
                 ], g.nodes);
             this.verifyEqual(zeros(2), g.edges);
             
             g.addNode('c', 'C');
             this.verifyEqual([
-                struct('name', 'a', 'label', 'A')
-                struct('name', 'b', 'label', 'B')
-                struct('name', 'c', 'label', 'C')
+                struct('id', 'a', 'label', 'A')
+                struct('id', 'b', 'label', 'B')
+                struct('id', 'c', 'label', 'C')
                 ], g.nodes);
             this.verifyEqual(zeros(3), g.edges);
             
             g.removeNode('b');
             this.verifyEqual([
-                struct('name', 'a', 'label', 'A')
-                struct('name', 'c', 'label', 'C')
+                struct('id', 'a', 'label', 'A')
+                struct('id', 'c', 'label', 'C')
                 ], g.nodes);
             this.verifyEqual(zeros(2), g.edges);
         end
@@ -73,9 +73,9 @@ classdef GraphTest < matlab.unittest.TestCase
             g.addNode('b', 'B');
             g.addNode('c', 'C');
             g.setNodes([
-                struct('name', 'x', 'label', 'X')
-                struct('name', 'y', 'label', 'Y')
-                struct('name', 'z', 'label', 'Z')
+                struct('id', 'x', 'label', 'X')
+                struct('id', 'y', 'label', 'Y')
+                struct('id', 'z', 'label', 'Z')
                 ]);
             
             h = Graph();
@@ -128,15 +128,15 @@ classdef GraphTest < matlab.unittest.TestCase
             import synnetgen.graph.Graph;
             
             g = Graph([
-                struct('name', 'a', 'label', 'A')
-                struct('name', 'b', 'label', 'B')
-                struct('name', 'c', 'label', 'C')
+                struct('id', 'a', 'label', 'A')
+                struct('id', 'b', 'label', 'B')
+                struct('id', 'c', 'label', 'C')
                 ], [0 1 0; 0 0 0; 0 0 -1]);
             
-            g.randomizeDirectionality();
-            g.removeDirectionality();
-            g.randomizeSigns();
-            g.removeSigns();
+            g.transform('RandomizeDirections');
+            g.transform('RemoveDirections');
+            g.transform('RandomizeSigns');
+            g.transform('RemoveSigns');
         end
         
         function testIsEqual(this)
@@ -180,9 +180,9 @@ classdef GraphTest < matlab.unittest.TestCase
             import synnetgen.graph.Graph;
             
             g = Graph([
-                struct('name', 'a', 'label', 'A')
-                struct('name', 'b', 'label', 'B')
-                struct('name', 'c', 'label', 'C')
+                struct('id', 'a', 'label', 'A')
+                struct('id', 'b', 'label', 'B')
+                struct('id', 'c', 'label', 'C')
                 ], [0 1 0; 0 0 0; 0 0 -1]);
             
             this.verifyEqual(g, g.copy());
@@ -201,8 +201,8 @@ classdef GraphTest < matlab.unittest.TestCase
             
             g.print();
             
-            h = g.plot();
-            close(h.fig);
+            figHandle = g.plot();
+            close(figHandle);
         end
         
         function testGenerateBarabasiAlbert(this)
@@ -210,7 +210,8 @@ classdef GraphTest < matlab.unittest.TestCase
             
             n = 10;
             m = 3;
-            g = Graph.generate('barabasi-albert', 'n', n, 'm', m);
+            g = Graph();
+            g.generate('barabasi-albert', 'n', n, 'm', m);
             this.verifyEqual(n, numel(g.nodes));
             this.verifyEqual((n-m) * m, nnz(triu(g.edges)));
             this.verifyEqual(triu(g.edges), tril(g.edges)');
@@ -225,15 +226,16 @@ classdef GraphTest < matlab.unittest.TestCase
             nTest = 100;
             m = zeros(nTest, 1);
             for iTest = 1:nTest
-                g = Graph.generate('edgar-gilbert', 'n', n, 'p', p);
+                g = Graph();
+                g.generate('edgar-gilbert', 'n', n, 'p', p);
                 this.verifyEqual(n, numel(g.nodes));
                 m(iTest) = nnz(g.edges);
             end
             
             expMean = p * n^2;
             expstd = sqrt(p * (1-p)*n^2);
-            this.verifyGreaterThan(mean(m), expMean - 0.25 * expstd);
-            this.verifyLessThan(mean(m), expMean + 0.25 * expstd);
+            this.verifyGreaterThan(mean(m), expMean - 0.5 * expstd);
+            this.verifyLessThan(mean(m), expMean + 0.5 * expstd);
             this.verifyEqual(triu(g.edges), tril(g.edges)');
         end
         
@@ -242,7 +244,8 @@ classdef GraphTest < matlab.unittest.TestCase
             
             n = 10;
             m = 10;
-            g = Graph.generate('erdos-reyni', 'n', n, 'm', m);
+            g = Graph();
+            g.generate('erdos-reyni', 'n', n, 'm', m);
             this.verifyEqual(n, numel(g.nodes));
             this.verifyEqual(m, nnz(triu(g.edges)));
             this.verifyEqual(triu(g.edges), tril(g.edges)');
@@ -254,7 +257,8 @@ classdef GraphTest < matlab.unittest.TestCase
             n = 10;
             p = 0.1;
             k = 2;
-            g = Graph.generate('watts-strogatz', 'n', n, 'p', p, 'k', k);
+            g = Graph();
+            g.generate('watts-strogatz', 'n', n, 'p', p, 'k', k);
             this.verifyEqual(n, numel(g.nodes));
             this.verifyEqual(triu(g.edges), tril(g.edges)');
         end
@@ -271,9 +275,10 @@ classdef GraphTest < matlab.unittest.TestCase
             g.addEdge('c', 'c', -1);
             
             filename = tempname();
-            Graph.export('tgf', 'graph', g, 'filename', filename);
+            g.export('tgf', 'filename', filename);
             
-            h = Graph.import('tgf', 'filename', filename);
+            h = Graph();
+            h.import('tgf', 'filename', filename);
             
             this.verifyEqual(g, h);
             
@@ -292,7 +297,7 @@ classdef GraphTest < matlab.unittest.TestCase
             g.addEdge('c', 'c', -1);
             
             filename = tempname();
-            Graph.export('dot', 'graph', g, 'filename', filename);
+            g.export('dot', 'filename', filename);
             
             delete(filename);
         end
@@ -309,7 +314,7 @@ classdef GraphTest < matlab.unittest.TestCase
             g.addEdge('c', 'c', -1);
             
             filename = tempname();
-            Graph.export('graphml', 'graph', g, 'filename', filename);
+            g.export('graphml', 'filename', filename);
             
             delete(filename);
         end
@@ -326,7 +331,7 @@ classdef GraphTest < matlab.unittest.TestCase
             g.addEdge('c', 'c', -1);
             
             filename = tempname();
-            Graph.export('gml', 'graph', g, 'filename', filename);
+            g.export('gml', 'filename', filename);
             
             delete(filename);
         end

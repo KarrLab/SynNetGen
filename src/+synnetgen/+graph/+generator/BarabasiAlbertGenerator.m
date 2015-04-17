@@ -16,7 +16,7 @@ classdef BarabasiAlbertGenerator < synnetgen.extension.Extension
     end
     
     methods (Static)
-        function graph = run(varargin)
+        function graph = run(graph, varargin)
             import synnetgen.graph.Graph;
             
             %parse arguments
@@ -31,8 +31,9 @@ classdef BarabasiAlbertGenerator < synnetgen.extension.Extension
                 throw(MException('SynNetGen:InvalidArgument', 'm must be less than n'));
             end
             
-            %build nodes
-            graph = Graph();
+            graph.clear();
+            
+            %build nodes            
             for iNode = 1:n
                 label = dec2base(iNode-1, 26);
                 for i = 25:-1:10

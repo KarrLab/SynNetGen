@@ -9,7 +9,6 @@ classdef TGFExporter < synnetgen.extension.Extension
         id = 'tgf'
         description = 'Trivial Graph Format graph exporter'
         inputs = struct(...
-            'graph', 'Graph', ...
             'filename', 'File name' ...
             )
         outputs = struct (...
@@ -18,13 +17,11 @@ classdef TGFExporter < synnetgen.extension.Extension
     end
     
     methods (Static)
-        function status = run(varargin)
+        function status = run(graph, varargin)
             %parse arguments
             ip = inputParser;
-            ip.addParameter('graph', []);
             ip.addParameter('filename', []);
             ip.parse(varargin{:});
-            graph = ip.Results.graph;
             filename = ip.Results.filename;
             
             if isempty(graph)
@@ -41,7 +38,7 @@ classdef TGFExporter < synnetgen.extension.Extension
             end
             
             for iNode = 1:numel(graph.nodes)
-                fprintf(fid, '%d %s\n', iNode, graph.nodes(iNode).name);
+                fprintf(fid, '%d %s\n', iNode, graph.nodes(iNode).id);
             end
             
             fprintf(fid, '#\n');

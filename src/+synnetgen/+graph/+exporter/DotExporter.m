@@ -8,7 +8,6 @@ classdef DotExporter < synnetgen.extension.Extension
         id = 'dot'
         description = 'Dot (GraphViz) graph exporter'
         inputs = struct(...
-            'graph', 'Graph', ...
             'filename', 'File name' ...
             )
         outputs = struct (...
@@ -17,13 +16,11 @@ classdef DotExporter < synnetgen.extension.Extension
     end
     
     methods (Static)
-        function status = run(varargin)
+        function status = run(graph, varargin)
             %parse arguments
             ip = inputParser;
-            ip.addParameter('graph', []);
             ip.addParameter('filename', []);
             ip.parse(varargin{:});
-            graph = ip.Results.graph;
             filename = ip.Results.filename;
             
             if isempty(graph)
@@ -43,7 +40,7 @@ classdef DotExporter < synnetgen.extension.Extension
             
             for iNode = 1:numel(graph.nodes)
                 fprintf(fid, '  "%s" ["%s"];\n', ...
-                    strrep(graph.nodes(iNode).name, '"', '\"'), ...
+                    strrep(graph.nodes(iNode).id, '"', '\"'), ...
                     strrep(graph.nodes(iNode).label, '"', '\"'));
             end
             
@@ -55,8 +52,8 @@ classdef DotExporter < synnetgen.extension.Extension
                     arrowhead  = 'tee';
                 end
                 fprintf(fid, '  "%s" -> "%s" [arrowhead=%s];\n', ...
-                    strrep(graph.nodes(iFrom(iEdge)).name, '"', '\"'), ...
-                    strrep(graph.nodes(iTo(iEdge)).name, '"', '\"'), ...
+                    strrep(graph.nodes(iFrom(iEdge)).id, '"', '\"'), ...
+                    strrep(graph.nodes(iTo(iEdge)).id, '"', '\"'), ...
                     arrowhead);
             end
             

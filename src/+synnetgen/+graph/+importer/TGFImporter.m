@@ -17,7 +17,7 @@ classdef TGFImporter < synnetgen.extension.Extension
     end
     
     methods (Static)
-        function graph = run(varargin)
+        function graph = run(graph, varargin)
             %% parse arguments
             ip = inputParser;
             ip.addParameter('filename', []);
@@ -34,7 +34,7 @@ classdef TGFImporter < synnetgen.extension.Extension
                 throw(MException('SynNetGen:UnableToOpenFile', 'Unable to open file %s', filename));
             end
             
-            graph = synnetgen.graph.Graph();
+            graph.clear();
             
             %nodes
             iNode = 0;
@@ -47,9 +47,9 @@ classdef TGFImporter < synnetgen.extension.Extension
                     endNodes = true;
                     break;
                 else
-                    result = regexp(line, '^(?<number>\d+) (?<name>.+)$', 'names');
+                    result = regexp(line, '^(?<number>\d+) (?<id>.+)$', 'names');
                     if ~isempty(result) && iNode == str2double(result.number)
-                        graph.addNode(result.name, result.name);
+                        graph.addNode(result.id, result.id);
                     else
                         throw(MException('SynNetGen:InvalidFile', 'File doesn''t match TGF format'))
                     end
@@ -70,7 +70,7 @@ classdef TGFImporter < synnetgen.extension.Extension
                 else
                     sign = -1;
                 end
-                graph.addEdge(graph.nodes(iFrom).name, graph.nodes(iTo).name, sign);
+                graph.addEdge(graph.nodes(iFrom).id, graph.nodes(iTo).id, sign);
             end
             
             fclose(fid);

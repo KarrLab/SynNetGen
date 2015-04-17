@@ -50,7 +50,7 @@ classdef ExtensionRunner < handle
                     iProp = find(strcmp('id', {pkg.ClassList(iClass).PropertyList.Name}), 1, 'first');
                     if strcmpi(extId, pkg.ClassList(iClass).PropertyList(iProp).DefaultValue)
                         if ~isempty(extClass)
-                            throw(MException('SynNetGen:ExtensionNameNotUnique', 'Extension names must be unique'));
+                            throw(MException('SynNetGen:ExtensionIdNotUnique', 'Extension ids must be unique'));
                         end
                         extClass = pkg.ClassList(iClass);
                     end
@@ -105,7 +105,7 @@ classdef ExtensionRunner < handle
         end
         
         function result = run(pkgId, extId, varargin)
-            %Runs extension with name extId in package pkgId with
+            %Runs extension with id extId in package pkgId with
             %arguments varargin{:}.
             
             %find extension
@@ -119,7 +119,7 @@ classdef ExtensionRunner < handle
                     iProp = find(strcmp('id', {pkg.ClassList(iClass).PropertyList.Name}), 1, 'first');
                     if strcmpi(extId, pkg.ClassList(iClass).PropertyList(iProp).DefaultValue)
                         if ~isempty(extClass)
-                            throw(MException('SynNetGen:ExtensionNameNotUnique', 'Extension names must be unique'));
+                            throw(MException('SynNetGen:ExtensionIdNotUnique', 'Extension ids must be unique'));
                         end
                         extClass = pkg.ClassList(iClass);
                     end

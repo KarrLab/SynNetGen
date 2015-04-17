@@ -19,7 +19,7 @@ classdef WattsStrogatzGenerator < synnetgen.extension.Extension
     end
     
     methods (Static)
-        function graph = run(varargin)
+        function graph = run(graph, varargin)
             import synnetgen.graph.Graph;
             
             %% parse arguments
@@ -39,8 +39,9 @@ classdef WattsStrogatzGenerator < synnetgen.extension.Extension
                 throw(MException('SynNetGen:InvalidArgument', 'k must be less than (n-1)/2 if p > 0'));
             end
             
+            graph.clear();
+            
             %% build nodes
-            graph = Graph();
             for iNode = 1:n
                 label = dec2base(iNode-1, 26);
                 for i = 25:-1:10

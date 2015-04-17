@@ -7,7 +7,6 @@ classdef GMLExporter < synnetgen.extension.Extension
         id = 'gml'
         description = 'GML graph exporter'
         inputs = struct(...
-            'graph', 'Graph', ...
             'filename', 'File name' ...
             )
         outputs = struct (...
@@ -16,13 +15,11 @@ classdef GMLExporter < synnetgen.extension.Extension
     end
     
     methods (Static)
-        function status = run(varargin)
+        function status = run(graph, varargin)
             %parse arguments
             ip = inputParser;
-            ip.addParameter('graph', []);
             ip.addParameter('filename', []);
             ip.parse(varargin{:});
-            graph = ip.Results.graph;
             filename = ip.Results.filename;
             
             if isempty(graph)
@@ -44,7 +41,7 @@ classdef GMLExporter < synnetgen.extension.Extension
             
             for iNode = 1:numel(graph.nodes)
                 fprintf(fid, '\tnode [\n\t\tid "%s"\n\t\tlabel "%s"\n\t]\n', ...
-                    strrep(graph.nodes(iNode).name, '"', '\"'), ...
+                    strrep(graph.nodes(iNode).id, '"', '\"'), ...
                     strrep(graph.nodes(iNode).label, '"', '\"'));
             end
             
@@ -56,8 +53,8 @@ classdef GMLExporter < synnetgen.extension.Extension
                     sign = '-';
                 end
                 fprintf(fid, '\tedge [\n\t\tsource "%s"\n\t\ttarget "%s"\n\t\tlabel "%s"\n\t]\n', ...
-                    strrep(graph.nodes(iFrom(iEdge)).name, '"', '\"'), ...
-                    strrep(graph.nodes(iTo(iEdge)).name, '"', '\"'), ...
+                    strrep(graph.nodes(iFrom(iEdge)).id, '"', '\"'), ...
+                    strrep(graph.nodes(iTo(iEdge)).id, '"', '\"'), ...
                     sign);
             end
             
