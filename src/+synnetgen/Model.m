@@ -12,11 +12,11 @@
 %@date    2015-04-15
 classdef Model < handle
     methods (Static)
-        function result = isNodeIdValid(id)
+        function result = isValidNodeId(id)
             result = ischar(id) && isrow(id) && ~isempty(id) && numel(id) <= 63 && ~isempty(regexpi(id, '^[a-z][a-z0-9_]*$'));
         end
         
-        function result = isNodeLabelValid(label)
+        function result = isValidNodeLabel(label)
             result = ischar(label) && isrow(label);
         end
     end

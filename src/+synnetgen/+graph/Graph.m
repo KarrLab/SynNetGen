@@ -41,16 +41,16 @@ classdef Graph < synnetgen.Model
             if ~isequal(sort(fieldnames(nodes)), sort({'id'; 'label'}))
                 throw(MException('SynNetGen:InvalidArgument', 'Nodes must be struct with two fields id and label'));
             end
-            if ~all(cellfun(@this.isNodeIdValid, {nodes.id}))
+            if ~all(cellfun(@this.isValidNodeId, {nodes.id}))
                 throw(MException('SynNetGen:InvalidArgument', 'Ids must be non-empty strings'));
             end
-            if ~all(cellfun(@this.isNodeLabelValid, {nodes.label}))
+            if ~all(cellfun(@this.isValidNodeLabel, {nodes.label}))
                 throw(MException('SynNetGen:InvalidArgument', 'Labels must be strings'));
             end
             
-            validateattributes(edges, {'numeric'}, {'ndims', 2, 'square', 'integer'});
-            if any(edges > 1 | edges < -1)
-                throw(MException('SynNetGen:InvalidEdges', 'Edges must have sign -1, 0, or 1'))
+            validateattributes(edges, {'numeric'}, {'ndims', 2, 'square'});
+            if ~all(all((edges >= -1 & edges <= 1 & edges == ceil(edges)) | isnan(edges)))
+                throw(MException('SynNetGen:InvalidEdges', 'Edges must have sign -1, 0, 1, or NaN'))
             end
             
             if numel(nodes) ~= size(edges, 1)
@@ -66,10 +66,10 @@ classdef Graph < synnetgen.Model
             if ~isequal(sort(fieldnames(nodes)), sort({'id'; 'label'}))
                 throw(MException('SynNetGen:InvalidArgument', 'Nodes must be struct with two fields id and label'));
             end
-            if ~all(cellfun(@this.isNodeIdValid, {nodes.id}))
+            if ~all(cellfun(@this.isValidNodeId, {nodes.id}))
                 throw(MException('SynNetGen:InvalidArgument', 'Ids must be non-empty strings'));
             end
-            if ~all(cellfun(@this.isNodeLabelValid, {nodes.label}))
+            if ~all(cellfun(@this.isValidNodeLabel, {nodes.label}))
                 throw(MException('SynNetGen:InvalidArgument', 'Labels must be strings'));
             end
             
@@ -83,12 +83,12 @@ classdef Graph < synnetgen.Model
             
             %id is non-empty unique string
             validateattributes(id, {'char'}, {'nonempty', 'row'});
-            if ~this.isNodeIdValid(id) || any(strcmp({this.nodes.id}, id))
+            if ~this.isValidNodeId(id) || any(strcmp({this.nodes.id}, id))
                 throw(MException('SynNetGen:InvalidNodeId', 'Invalid node id ''%s''', id))
             end
             
             %label is string
-            if ~this.isNodeLabelValid(label)
+            if ~this.isValidNodeLabel(label)
                 throw(MException('SynNetGen:InvalidNodeLabel', 'Invalid node label ''%s''', label))
             end
             
@@ -123,9 +123,9 @@ classdef Graph < synnetgen.Model
         
         function this = setEdges(this, edges)
             validateattributes(edges, {'numeric'}, ...
-                {'size' [numel(this.nodes) numel(this.nodes)] 'integer'});
-            if any(edges > 1 | edges < -1)
-                throw(MException('SynNetGen:InvalidEdges', 'Edges must have sign -1, 0, or 1'))
+                {'size' [numel(this.nodes) numel(this.nodes)]});
+            if ~all(all((edges >= -1 & edges <= 1 & edges == ceil(edges)) | isnan(edges)))
+                throw(MException('SynNetGen:InvalidEdges', 'Edges must have sign -1, 0, 1, or NaN'))
             end
             
             this.edges = edges;
@@ -151,12 +151,15 @@ classdef Graph < synnetgen.Model
             end
             
             %edge doesn't already exist
-            if this.edges(iFromNode, iToNode)
+            if this.edges(iFromNode, iToNode) ~= 0
                 throw(MException('SynNetGen:EdgeAlreadyExists', 'Edge already exists from ''%s'' to ''%s''', fromNodeId, toNodeId))
             end
             
             %edge has valid sign
-            validateattributes(sign, {'numeric'}, {'scalar', 'integer', 'odd', '<=', 1, '>=', -1});
+            validateattributes(sign, {'numeric'}, {'scalar'});
+            if ~((sign >= -1 && sign <= 1 && sign == ceil(sign)) || isnan(sign))
+                throw(MException('SynNetGen:InvalidEdges', 'Edges must have sign -1, 0, 1, or NaN'))
+            end
             
             %% add edge
             this.edges(iFromNode, iToNode) = sign;
@@ -181,8 +184,8 @@ classdef Graph < synnetgen.Model
                 throw(MException('SynNetGen:NodeDoesNotExist', 'Node with id ''%s'' does not exist', toNodeId))
             end
             
-            %edge already exists
-            if ~this.edges(iFromNode, iToNode)
+            %edge doesn't exist
+            if this.edges(iFromNode, iToNode) == 0
                 throw(MException('SynNetGen:EdgeDoesNotExist', 'Edge does not exist from ''%s'' to ''%s''', fromNodeId, toNodeId))
             end
             
@@ -216,7 +219,7 @@ classdef Graph < synnetgen.Model
             end
             
             %same edges
-            if ~isequal(this.edges(iRowsThis, iRowsThis), that.edges(iRowsThat, iRowsThat))
+            if ~all(all(this.edges(iRowsThis, iRowsThis) == that.edges(iRowsThat, iRowsThat) | (isnan(this.edges(iRowsThis, iRowsThis)) & isnan(that.edges(iRowsThat, iRowsThat))))) 
                 tf = false;
                 return;
             end
@@ -268,10 +271,13 @@ classdef Graph < synnetgen.Model
                 ];
             [iFrom, iTo] = find(this.edges);
             for iEdge = 1:numel(iFrom)
-                if this.edges(iFrom(iEdge), iTo(iEdge))
-                    sign = '>';
-                else
-                    sign = '|';
+                switch this.edges(iFrom(iEdge), iTo(iEdge))
+                    case 1
+                        sign = '>';
+                    case -1
+                        sign = '|';
+                    otherwise
+                        sign = '-';
                 end
                 str = [
                     str
@@ -298,13 +304,15 @@ classdef Graph < synnetgen.Model
             edgeColors = [{this.nodes(iFrom).id}' {this.nodes(iTo).id}' cell(numel(iFrom), 1)];
             edgeLabels(this.edges(find(this.edges)) ==  1, 3) = {'+'};
             edgeLabels(this.edges(find(this.edges)) == -1, 3) = {'-'};
+            edgeLabels(isnan(this.edges(find(this.edges))), 3) = {'?'};
             edgeColors(this.edges(find(this.edges)) ==  1, 3) = {'k'};
             edgeColors(this.edges(find(this.edges)) == -1, 3) = {'r'};
+            edgeColors(isnan(this.edges(find(this.edges))), 3) = {[0.5 0.5 0.5]};
             
             result = graphViz4Matlab(...
                 '-nodeLabels', {this.nodes.id}', ...
                 '-nodeDescriptions', {this.nodes.label}', ...
-                '-adjMat', this.edges, ...
+                '-adjMat', this.edges ~= 0, ...
                 '-edgeLabels', edgeLabels, ...
                 '-edgeColors', edgeColors, ...
                 '-nodeColors', nodeColors, ...
