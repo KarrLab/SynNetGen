@@ -22,6 +22,8 @@ classdef Graph < synnetgen.Model
     
     methods
         function this = Graph(nodes, edges)
+            %Construct signed, directed graph
+            
             if nargin < 1
                 nodes = repmat(struct('id', '', 'label', ''), 0, 1);
             end
@@ -35,7 +37,7 @@ classdef Graph < synnetgen.Model
     
     methods
         function this = setNodesAndEdges(this, nodes, edges)
-            %set nodes and edges
+            %Set nodes and edges
             
             validateattributes(nodes, {'struct'}, {'column'})
             if ~isequal(sort(fieldnames(nodes)), sort({'id'; 'label'}))
@@ -62,6 +64,8 @@ classdef Graph < synnetgen.Model
         end
         
         function this = setNodes(this, nodes)
+            %Set nodes
+            
             validateattributes(nodes, {'struct'}, {'column'})
             if ~isequal(sort(fieldnames(nodes)), sort({'id'; 'label'}))
                 throw(MException('SynNetGen:InvalidArgument', 'Nodes must be struct with two fields id and label'));
@@ -122,6 +126,8 @@ classdef Graph < synnetgen.Model
         end
         
         function this = setEdges(this, edges)
+            %Set Edges
+            
             validateattributes(edges, {'numeric'}, ...
                 {'size' [numel(this.nodes) numel(this.nodes)]});
             if ~all(all((edges >= -1 & edges <= 1 & edges == ceil(edges)) | isnan(edges)))
@@ -219,7 +225,7 @@ classdef Graph < synnetgen.Model
             end
             
             %same edges
-            if ~all(all(this.edges(iRowsThis, iRowsThis) == that.edges(iRowsThat, iRowsThat) | (isnan(this.edges(iRowsThis, iRowsThis)) & isnan(that.edges(iRowsThat, iRowsThat))))) 
+            if ~all(all(this.edges(iRowsThis, iRowsThis) == that.edges(iRowsThat, iRowsThat) | (isnan(this.edges(iRowsThis, iRowsThis)) & isnan(that.edges(iRowsThat, iRowsThat)))))
                 tf = false;
                 return;
             end
