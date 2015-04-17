@@ -473,7 +473,7 @@ classdef graphViz4Matlab < handle
             % Add all of the edges to the graph structure, but don't display
             % them yet.
             if(any(diag(obj.adjMatrix)))
-                fprintf('\nRemoving Self Loops\n');
+                %fprintf('\nRemoving Self Loops\n');
                 obj.adjMatrix = obj.adjMatrix - diag(diag(obj.adjMatrix));
             end
             obj.edgeArray = struct('from',[],'to',[],'arrow',[],'label',[]);
