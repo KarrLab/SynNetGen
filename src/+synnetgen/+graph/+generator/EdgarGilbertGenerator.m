@@ -1,4 +1,4 @@
-%Generate Edgar-Gilbert random network with parameters n and n.
+%Generate Edgar-Gilbert random network with parameters n and p.
 %- n: number of nodes
 %- p: probability of edge between two nodes
 %

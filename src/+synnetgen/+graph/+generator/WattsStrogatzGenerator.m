@@ -1,4 +1,4 @@
-%Generate Watts-Strogatz random network with parameters n and n.
+%Generate Watts-Strogatz random network with parameters n, p, and k.
 %- n: number of nodes
 %- p: probability of edge between two nodes
 %- k: probability of edge between two nodes
@@ -8,7 +8,7 @@
 classdef WattsStrogatzGenerator < synnetgen.extension.Extension
     properties (Constant)
         id = 'watts-strogatz'
-        description = 'Watts-Strogatz random network generator (n, m)'
+        description = 'Watts-Strogatz random network generator (n, p, k)'
         inputs = struct(...
             'n', 'Number of nodes', ...
             'p', 'Rewiring probability', ...
