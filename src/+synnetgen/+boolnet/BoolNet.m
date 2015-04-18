@@ -272,7 +272,7 @@ classdef BoolNet < synnetgen.Model
             %Check if rules are valid
             
             validateattributes(rules, {'cell'}, {'column'});
-            if ~all(cellfun(@(rule) ischar(rule) && isrow(rule), rules))
+            if ~all(cellfun(@(rule) ischar(rule) && (isempty(rule) || isrow(rule)), rules))
                 result = false;
                 return;
             end
@@ -282,6 +282,10 @@ classdef BoolNet < synnetgen.Model
                 nodeVals.(nodes(iNode).id) = true;
             end
             for iRule = 1:numel(rules)
+                if isempty(rules{iRule})
+                    continue;
+                end
+                    
                 if isempty(regexpi(rules{iRule}, '^((~?\()?~?[a-z]\w*( ?(\|\||\&\&) ?(~?\()?~?[a-z]\w*\)?)*)?$'))
                     result = false;
                     return;
@@ -326,7 +330,9 @@ classdef BoolNet < synnetgen.Model
             thisSorted = synnetgen.boolnet.BoolNet(this.nodes(iRowsThis), this.rules(iRowsThis));
             thatSorted = synnetgen.boolnet.BoolNet(that.nodes(iRowsThat), that.rules(iRowsThat));
             
-            if ~isequal(thisSorted.getEdges(), thatSorted.getEdges())
+            thisEdges = thisSorted.getEdges();
+            thatEdges = thatSorted.getEdges();
+            if ~all(all(thisEdges == thatEdges | (isnan(thisEdges) & isnan(thatEdges))))
                 tf = false;
                 return;
             end
@@ -397,7 +403,7 @@ classdef BoolNet < synnetgen.Model
             %  - layout: see graphviz4matlab\layouts
             %  - nodeColors
             
-            graph = synnetgen.graph.Graph(this.nodes(), this.getEdges());
+            graph = this.convert('graph');
             figHandle = graph.plot(varargin{:});
         end
     end
@@ -424,7 +430,7 @@ classdef BoolNet < synnetgen.Model
             %algorithms. See synnetgen.boolnet.transform for supported
             %algorithms and their options.
             
-            result = synnetgen.extension.ExtensionRunner.run('synnetgen.boolnet.convert', extId, this, varargin{:});
+            result = synnetgen.extension.ExtensionRunner.run('synnetgen.boolnet.converter', extId, this, varargin{:});
         end
         
         function result = import(this, extId, varargin)

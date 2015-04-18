@@ -9,6 +9,10 @@ classdef ExtensionRunnerTest < matlab.unittest.TestCase
             info = synnetgen.extension.ExtensionRunner.get('synnetgen.graph.exporter', 'dot');
             
             %print
+            synnetgen.extension.ExtensionRunner.get('synnetgen.boolnet.converter', 'graph');
+            
+            synnetgen.extension.ExtensionRunner.get('synnetgen.graph.converter', 'boolnet');
+            
             synnetgen.extension.ExtensionRunner.get('synnetgen.graph.exporter', 'dot');
             synnetgen.extension.ExtensionRunner.get('synnetgen.graph.exporter', 'gml');
             synnetgen.extension.ExtensionRunner.get('synnetgen.graph.exporter', 'graphml');
@@ -32,9 +36,17 @@ classdef ExtensionRunnerTest < matlab.unittest.TestCase
             info = synnetgen.extension.ExtensionRunner.list('synnetgen.graph.exporter');
             
             %print
+            synnetgen.extension.ExtensionRunner.list('synnetgen.boolnet.converter');
+            synnetgen.extension.ExtensionRunner.list('synnetgen.boolnet.exporter');
+            synnetgen.extension.ExtensionRunner.list('synnetgen.boolnet.generator');
+            synnetgen.extension.ExtensionRunner.list('synnetgen.boolnet.importer');
+            synnetgen.extension.ExtensionRunner.list('synnetgen.boolnet.transform');
+            
+            synnetgen.extension.ExtensionRunner.list('synnetgen.graph.converter');
             synnetgen.extension.ExtensionRunner.list('synnetgen.graph.exporter');
             synnetgen.extension.ExtensionRunner.list('synnetgen.graph.generator');
             synnetgen.extension.ExtensionRunner.list('synnetgen.graph.importer');
+            synnetgen.extension.ExtensionRunner.list('synnetgen.graph.transform');
         end
     end
 end

@@ -166,9 +166,9 @@ classdef BoolNetTest < matlab.unittest.TestCase
                 -1  1  0  0 -1 NaN
                 -1  1  1 -1 -1  -1
                 -1  0  1 -1  1   1
-                 1 -1  0  0  1   0
-                 1  0  0  0  0   0
-                 1  0  0  0  0   0
+                1 -1  0  0  1   0
+                1  0  0  0  0   0
+                1  0  0  0  0   0
                 ]);
         end
         
@@ -283,6 +283,26 @@ classdef BoolNetTest < matlab.unittest.TestCase
             
             h = n.plot();
             close(h);
+        end
+        
+        function testConvertToFromGraph(this)
+            n = synnetgen.boolnet.BoolNet();
+            n.addNode('a', 'A');
+            n.addNode('b', 'B');
+            n.addNode('c', 'C');
+            n.addNode('d', 'D');
+            n.addNode('e', 'E');
+            n.addNode('f', 'F');
+            n.setRule('a', '~(a || b || c) && (d || e || f)');
+            n.setRule('b', '~d && (a || b)');
+            n.setRule('c', '(c || b)');
+            n.setRule('d', '~(c || b)');
+            n.setRule('e', '~(d && e) && (c && d)');
+            n.setRule('f', '~(f || e) && (a || c)');
+            
+            g = n.convert('graph');
+            m = g.convert('boolnet');
+            this.verifyEqual(m, n);
         end
         
         %generate

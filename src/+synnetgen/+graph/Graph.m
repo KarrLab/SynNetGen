@@ -349,7 +349,7 @@ classdef Graph < synnetgen.Model
             %algorithms. See synnetgen.graph.transform for supported
             %algorithms and their options.
             
-            result = synnetgen.extension.ExtensionRunner.run('synnetgen.graph.convert', extId, this, varargin{:});
+            result = synnetgen.extension.ExtensionRunner.run('synnetgen.graph.converter', extId, this, varargin{:});
         end
         
         function result = export(this, extId, varargin)
