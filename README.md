@@ -28,6 +28,7 @@ Package                                            | Tested version | Optional
 ## Getting started
 
 The following example illustrates how to:
+
 1. Create a random unsigned, undirected graph
 2. Randomize the directions and signs to create a random signed, directed graph
 3. Convert the graph to a random Boolean network
