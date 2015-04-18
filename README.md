@@ -27,6 +27,42 @@ Package                                            | Tested version | Optional
     
 ## Getting started
 
+The following example illustrates how to:
+1. Create a random unsigned, undirected graph
+2. Randomize the directions and signs to create a random signed, directed graph
+3. Convert the graph to a random Boolean network
+4. Print and plot the graphs and network
+5. Export the grapsh and network
+
+```
+%generate undirected, unsigned graph
+model1 = synnetgen.graph.Graph();
+model1.generate('barabasi-albert', 'n', 10, 'm', 3);
+
+%make directed
+model2 = model1.copy();
+model2.setEdges(triu(model1.edges));
+model2.transform('RandomizeDirections');
+
+%make signed
+model3 = model2.copy();
+model3.transform('RandomizeSigns');
+
+%convert to boolean network
+model4 = model3.convert('boolnet');
+
+%print and plot
+model3.display();
+model3.plot();
+
+model4.display();
+model4.plot();
+
+%export
+model3.export('tgf', 'model3.tgf');
+model4.export('R-BoolNet', 'model4.bn');
+```
+
 ## Documentation
 
 ### Generators
