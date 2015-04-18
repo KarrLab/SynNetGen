@@ -29,7 +29,7 @@ classdef RBoolNetExporter < synnetgen.extension.Extension
                 throw(MException('SynNetGen:InvalidArgument', 'filename must be defined'));
             end
             
-            %% import
+            %% export
             fid = fopen(filename, 'w+');
             if fid == -1
                 throw(MException('SynNetGen:UnableToOpenFile', 'Unable to open file %s', filename));
