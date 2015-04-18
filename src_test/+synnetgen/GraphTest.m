@@ -279,10 +279,9 @@ classdef GraphTest < matlab.unittest.TestCase
             
             h = Graph();
             h.import('tgf', 'filename', filename);
+            delete(filename);
             
             this.verifyEqual(g, h);
-            
-            delete(filename);
         end
         
         function testExportDot(this)
