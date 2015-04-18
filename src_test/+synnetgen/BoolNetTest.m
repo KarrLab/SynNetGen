@@ -305,8 +305,29 @@ classdef BoolNetTest < matlab.unittest.TestCase
             this.verifyEqual(m, n);
         end
         
-        %generate
-        %transform
+        function testRBoolNetExportImport(this)
+            n = synnetgen.boolnet.BoolNet();
+            n.addNode('a', 'a');
+            n.addNode('b', 'b');
+            n.addNode('c', 'c');
+            n.addNode('d', 'd');
+            n.addNode('e', 'e');
+            n.addNode('f', 'f');
+            n.setRule('a', '~(a || b || c) && (d || e || f)');
+            n.setRule('b', '~d && (a || b)');
+            n.setRule('c', '(c || b)');
+            n.setRule('d', '~(c || b)');
+            n.setRule('e', '~(d && e) && (c && d)');
+            n.setRule('f', '~(f || e) && (a || c)');
+            
+            filename = tempname();            
+            n.export('R-BoolNet', 'filename', filename);
+            m = synnetgen.boolnet.BoolNet();
+            m = m.import('R-BoolNet', 'filename', filename);
+            
+            this.verifyEqual(m, n);
+        end
+        
         %export
         %import
     end

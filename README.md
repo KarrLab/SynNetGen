@@ -26,19 +26,22 @@
 ## Documentation
 
 ### Generators
-* Graphs
-  * Barabasi-Albert (n, m)
-  * Edgar-Gilbert (n, p)
-  * Erdos-Reyni (n, m)
-  * Watts-Strogatz (n, p, k)
+Generator       | Parameters | Type 
+--------------- | ---------- | -----
+Barabasi-Albert | n, m       | Graph
+Edgar-Gilbert   | n, p       | Graph
+Erdos-Reyni     | n, m       | Graph
+Watts-Strogatz  | n, p, k    | Graph
 
 ### File formats
-Format  | Extension | Type  | Input | Output
-------- | --------- | ----- | ----- | ------ 
-Dot     | dot       | Graph |       | X 
-GML     | gml       | Graph |       | X 
-GraphML | xml       | Graph |       | X 
-TGF     | tgf       | Graph | X     | X 
+Format    | Extension | Type    | Import | Export
+-------   | --------- | ------- | ------ | ------ 
+Dot       | dot       | Graph   |        | X 
+GML       | gml       | Graph   |        | X 
+GraphML   | xml       | Graph   |        | X 
+R BoolNet | bn        | BoolNet | X      | X
+SBML      | xml       |         |        |
+TGF       | tgf       | Graph   | X      | X 
 
 ## About SynNetGen
 
