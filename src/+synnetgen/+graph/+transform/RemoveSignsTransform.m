@@ -13,6 +13,8 @@ classdef RemoveSignsTransform < synnetgen.extension.Extension
     
     methods (Static)
         function graph = run(graph, varargin)
+            validateattributes(graph, {'synnetgen.graph.Graph'}, {'scalar'});
+            
             graph.setEdges(abs(graph.edges));
         end
     end

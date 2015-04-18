@@ -16,6 +16,8 @@ classdef RandomizeDirectionsTransform < synnetgen.extension.Extension
     methods (Static)
         function graph = run(graph, varargin)
             %parse arguments
+            validateattributes(graph, {'synnetgen.graph.Graph'}, {'scalar'});
+            
             ip = inputParser;
             ip.addParameter('p', 0.5, @(x) isnumeric(x) && isscalar(x) && x >= 0 && x <= 1);
             ip.parse(varargin{:});

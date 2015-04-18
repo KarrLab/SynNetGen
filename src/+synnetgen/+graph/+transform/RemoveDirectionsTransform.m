@@ -13,6 +13,8 @@ classdef RemoveDirectionsTransform < synnetgen.extension.Extension
     
     methods (Static)
         function graph = run(graph, varargin)
+            validateattributes(graph, {'synnetgen.graph.Graph'}, {'scalar'});
+            
             graph.setEdges(triu(graph.edges) + triu(graph.edges)' - diag(diag(graph.edges)));
         end
     end

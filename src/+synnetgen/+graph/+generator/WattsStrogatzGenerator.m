@@ -20,9 +20,9 @@ classdef WattsStrogatzGenerator < synnetgen.extension.Extension
     
     methods (Static)
         function graph = run(graph, varargin)
-            import synnetgen.graph.Graph;
-            
             %% parse arguments
+            validateattributes(graph, {'synnetgen.graph.Graph'}, {'scalar'});
+            
             ip = inputParser;
             ip.addParameter('n', 100, @(x) isnumeric(x) && isscalar(x) && x >= 0 && x == ceil(x));
             ip.addParameter('p', 0.1, @(x) isnumeric(x) && isscalar(x) && x >= 0 && x <= 1);

@@ -18,6 +18,8 @@ classdef DotExporter < synnetgen.extension.Extension
     methods (Static)
         function status = run(graph, varargin)
             %parse arguments
+            validateattributes(graph, {'synnetgen.graph.Graph'}, {'scalar'});
+            
             ip = inputParser;
             ip.addParameter('filename', []);
             ip.parse(varargin{:});
