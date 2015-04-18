@@ -18,7 +18,7 @@ classdef PipelineTest < matlab.unittest.TestCase
             model3 = model2.copy();
             model3.transform('RandomizeSigns');
             
-            %convet to boolean network
+            %convert to boolean network
             model4 = model3.convert('boolnet');
             
             %browse through plots
