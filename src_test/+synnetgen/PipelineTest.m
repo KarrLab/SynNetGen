@@ -6,26 +6,30 @@ classdef PipelineTest < matlab.unittest.TestCase
     methods (Test)
         function testGenerateDynamics(this)
             %generate undirected, unsigned graph
-            graph1 = synnetgen.graph.Graph();
-            graph1.generate('barabasi-albert', 'n', 10, 'm', 3);
+            model1 = synnetgen.graph.Graph();
+            model1.generate('barabasi-albert', 'n', 10, 'm', 3);
             
             %make directed
-            graph2 = graph1.copy();
-            graph2.setEdges(triu(graph1.edges));
-            graph2.transform('RandomizeDirections');
+            model2 = model1.copy();
+            model2.setEdges(triu(model1.edges));
+            model2.transform('RandomizeDirections');
             
             %make signed
-            graph3 = graph2.copy();
-            graph3.transform('RandomizeSigns');
+            model3 = model2.copy();
+            model3.transform('RandomizeSigns');
+            
+            %convet to boolean network
+            model4 = model3.convert('boolnet');
             
             %browse through plots
-            graphs = [
-                graph1
-                graph2
-                graph3
-                ];
+            graphs = {
+                model1
+                model2
+                model3
+                model4
+                };
             for i = 1:numel(graphs)
-                figHandle = graphs(i).plot();
+                figHandle = graphs{i}.plot();
                 pause(0.25);
                 close(figHandle);
             end
