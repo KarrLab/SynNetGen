@@ -3,8 +3,12 @@
 ## Installation
 
 ### Requirements
-* MATLAB >= 2014a
-* GraphViz >= 2.36.0
+
+Package                                            | Tested version | Optional
+-------------------------------------------------- | -------------- | ------------------
+[MATLAB](http://www.mathworks.com/products/matlab) | 2014a          | 
+[GraphViz](http://graphviz.org)                    | 2.36.0         | Plotting
+[libSBML-MATLAB](http://sbml.org/Software/libSBML) | 5.11.4         | SBML import/export
 
 ### Setup
 1. Installed required software
