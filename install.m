@@ -12,7 +12,7 @@ function install()
 %% Check requirements
 %MATLAB >= 2014a
 if verLessThan('matlab', '8.3.0')
-    throw(MException('SynNetGen:InvalidRequirements', 'MATLAB >= 2014a required'));
+    warning('SynNetGen:warning', 'tested on MATLAB 2014a. MATLAB >= 2014a may be required');
 end
 
 %GraphViz >= 2.36
@@ -23,7 +23,12 @@ end
 
 info = regexp(result, 'dot - graphviz version (?<version>\d+)\.(?<subversion>\d+)\.(?<subsubversion>\d+) \((?<year>\d{4,4})(?<month>\d{2,2})(?<day>\d{2,2}).(?<revision>\d+)\)\n', 'names');
 if str2double([info.version '.' info.subversion]) < 2.36
-    throw(MException('SynNetGen:InvalidRequirements', 'GraphViz >= 2.36 required'))
+    warning('SynNetGen:InvalidRequirements', 'Tested on GraphViz 2.36. GraphViz >= 2.36 may be required.')
+end
+
+%libSBML-matlab
+if isempty(which('TranslateSBML'))
+    throw(MException('SynNetGen:InvalidRequirements', 'libSBML-MATLAB not installed'))
 end
 
 %% check not installed
