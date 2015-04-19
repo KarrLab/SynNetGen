@@ -41,18 +41,16 @@ classdef MATLABExporter < synnetgen.extension.Extension
             end
             fprintf(fid, '\n');
             
-            fprintf(fid, 'y1 = false(size(y0));\n');
+            fprintf(fid, 'y1 = y0;\n');
             for iNode = 1:numel(boolnet.nodes)
                 rule = boolnet.rules{iNode};
-                if isempty(boolnet.rules{iNode})
-                    rule = boolnet.nodes(iNode).id;
+                if ~isempty(boolnet.rules{iNode})
+                    for iNode2 = 1:numel(boolnet.nodes)
+                        rule = regexprep(rule, ['(^|[^a-zA-Z])' boolnet.nodes(iNode2).id '([^a-zA-Z0-9_]|$)'], sprintf('$1y0(%d)$2', iNode2));
+                    end
+                    
+                    fprintf(fid, 'y1(%d) = %s;\n', iNode, rule);
                 end
-                
-                for iNode2 = 1:numel(boolnet.nodes)
-                    rule = regexprep(rule, ['(^|[^a-zA-Z])' boolnet.nodes(iNode2).id '([^a-zA-Z0-9_]|$)'], sprintf('$1y0(%d)$2', iNode2));
-                end
-                
-                fprintf(fid, 'y1(%d) = %s;\n', iNode, rule);
             end
             
             fclose(fid);
