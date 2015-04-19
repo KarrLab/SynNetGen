@@ -33,7 +33,7 @@ The following example illustrates how to:
 2. Randomize the directions and signs to create a random signed, directed graph
 3. Convert the graph to a random Boolean network
 4. Print and plot the graphs and network
-5. Export the grapsh and network
+5. Export the graphs and network
 
 ```matlab
 %generate undirected, unsigned graph
