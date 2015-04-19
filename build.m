@@ -1,10 +1,33 @@
 %Builds SynNetGen software
+%- Creates folders for extensions
 %- Verifies tests
 %- Generates documentation
 %
 %@author  Jonathan Karr, karr@mssm.edu
 %@date    2015-04-15
 function build()
+
+%% setup extension folders
+modelTypes = {
+    'graph'
+    'boolnet'
+    'odes'
+    };
+extTypes = {
+    'generator'
+    'transform'
+    'converter'
+    'exporter'
+    'importer'
+    };
+for iModelType = 1:numel(modelTypes)
+    for iExtType = 1:numel(extTypes)
+        dirName = fullfile('src', '+synnetgen', ['+' modelTypes{iModelType}], ['+' extTypes{iExtType}]);
+        if ~exist(dirName, 'dir')
+            mkdir(dirName);
+        end
+    end
+end
 
 %% compile documentation
 %create output directory
