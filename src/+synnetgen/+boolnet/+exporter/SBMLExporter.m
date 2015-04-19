@@ -1,5 +1,4 @@
-%Exports network to SBML qualitative model
-%(http://cran.r-project.org/package=BoolNet).
+%Exports network to SBML using qual package
 %
 %@author  Jonathan Karr, karr@mssm.edu
 %@date    2015-04-18
