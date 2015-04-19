@@ -347,6 +347,29 @@ classdef BoolNetTest < matlab.unittest.TestCase
             this.verifyEqual(m, n);
         end
         
+        function testMATLABExport(this)
+            n = synnetgen.boolnet.BoolNet();
+            n.addNode('a', 'a');
+            n.addNode('b', 'b');
+            n.addNode('c', 'c');
+            n.setRule('a', '~c');
+            n.setRule('b', '~a');
+            n.setRule('c', 'b');
+            
+            filename = [tempname('.') '.m'];
+            funcName = filename(3:end-2);
+            n.export('MATLAB', 'filename', filename);
+            
+            func = str2func(funcName);
+            this.verifyTrue(isa(func, 'function_handle'));
+            
+            %x0 = struct('a', false, 'b', false, 'c', false);
+            %x1 = feval(func, x0);
+            %this.verifyEqual(x1, struct('a', true, 'b', true, 'c', false));
+            
+            delete(filename);
+        end
+        
         function testSBMLExportAndImport(this)
             this.assumeTrue(exist('synnetgen.boolnet.importer.SBMLImporter', 'class'), 'SBML importer must be implemented')
             
@@ -364,11 +387,11 @@ classdef BoolNetTest < matlab.unittest.TestCase
             n.setRule('e', '~(d && e) && (c && d)');
             n.setRule('f', '~(f || e) && (a || c)');
             
-            filename = tempname();            
+            filename = tempname();
             n.export('sbml', 'filename', filename);
             m = synnetgen.boolnet.BoolNet();
-            m = m.import('sbml', 'filename', filename);            
-            delete(filename);          
+            m = m.import('sbml', 'filename', filename);
+            delete(filename);
             
             this.verifyEqual(m, n);
         end

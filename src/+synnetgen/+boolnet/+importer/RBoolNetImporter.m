@@ -63,7 +63,7 @@ classdef RBoolNetImporter < synnetgen.extension.Extension
                     ];
                 rules = [
                     rules
-                    util.trim(idRule(2))
+                    strrep(util.trim(idRule(2)), '!', '~')
                     ];
             end
             fclose(fid);

@@ -3,10 +3,10 @@
 %
 %@author  Jonathan Karr, karr@mssm.edu
 %@date    2015-04-18
-classdef RBoolNetExporter < synnetgen.extension.Extension
+classdef MATLABExporter < synnetgen.extension.Extension
     properties (Constant)
-        id = 'R-BoolNet'
-        description = 'R BoolNet exporter'
+        id = 'MATLAB'
+        description = 'MATLAB exporter'
         inputs = struct(...            
             'filename', 'File name' ...
             )
@@ -35,16 +35,15 @@ classdef RBoolNetExporter < synnetgen.extension.Extension
                 throw(MException('SynNetGen:UnableToOpenFile', 'Unable to open file %s', filename));
             end
             
-            fprintf(fid, 'targets, factors\n');
-            for iNode = 1:numel(boolnet.nodes)
+            fprintf(fid, 'function x1 = updateModel(x0)\n');
+            fprintf(fid, 'x1 = x0;\n');
+            for iNode = 1:numel(boolnet.nodes)                
                 if ~isempty(boolnet.rules{iNode})
-                    rule = strrep(boolnet.rules{iNode}, '~', '!');
-                else
-                    rule = '1';
+                    fprintf(fid, 'x1.%s = %s; %%%s\n', ...
+                        boolnet.nodes(iNode).id, ...
+                        regexprep(boolnet.rules{iNode}, '([a-z][a-z0-9_]*)', 'x0.$1', 'ignorecase'), ...
+                        boolnet.nodes(iNode).label);
                 end
-                    
-                fprintf(fid, '#%s: %s\n', boolnet.nodes(iNode).id, boolnet.nodes(iNode).label);
-                fprintf(fid, '%s, %s\n', boolnet.nodes(iNode).id, rule);
             end
             
             fclose(fid);

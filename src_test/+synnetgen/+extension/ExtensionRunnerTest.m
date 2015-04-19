@@ -10,6 +10,7 @@ classdef ExtensionRunnerTest < matlab.unittest.TestCase
             
             %print
             synnetgen.extension.ExtensionRunner.get('synnetgen.boolnet.converter', 'graph');
+            synnetgen.extension.ExtensionRunner.get('synnetgen.boolnet.exporter', 'MATLAB');
             synnetgen.extension.ExtensionRunner.get('synnetgen.boolnet.exporter', 'R-BoolNet');
             synnetgen.extension.ExtensionRunner.get('synnetgen.boolnet.exporter', 'SBML');
             synnetgen.extension.ExtensionRunner.get('synnetgen.boolnet.importer', 'R-BoolNet');
