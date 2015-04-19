@@ -14,14 +14,14 @@ Package                                            | Tested version | Optional
 1. Installed required software
 2. Clone repository
 
-    ```
+    ```Shell
     git clone https://github.com/jonrkarr/SynNetGen.git
     ```
 3. Change to /path/to/SynNetGen
 4. Open MALTAB
 5. Run installer
 
-    ```
+    ```matlab
     install();
     ```
     
@@ -35,7 +35,7 @@ The following example illustrates how to:
 4. Print and plot the graphs and network
 5. Export the grapsh and network
 
-```
+```matlab
 %generate undirected, unsigned graph
 model1 = synnetgen.graph.Graph();
 model1.generate('barabasi-albert', 'n', 10, 'm', 3);
