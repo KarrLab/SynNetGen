@@ -37,6 +37,7 @@ classdef BoolNetTest < matlab.unittest.TestCase
             
             this.verifyTrue(n.areRulesValid(n.nodes, {'a'}));
             this.verifyTrue(n.areRulesValid(n.nodes, {'a || b'}));
+            this.verifyTrue(n.areRulesValid(n.nodes, {'((a || (b)))'}));
             this.verifyFalse(n.areRulesValid(n.nodes, {'A'}));
             this.verifyFalse(n.areRulesValid(n.nodes, {'d'}));
         end

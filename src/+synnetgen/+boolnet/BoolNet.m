@@ -61,7 +61,7 @@ classdef BoolNet < synnetgen.Model
         end
         
         function this = addNode(this, id, label)
-            %Adds node with id and label to graph
+            %Adds node with id and label to network
             
             %% validate arguments
             
@@ -292,13 +292,13 @@ classdef BoolNet < synnetgen.Model
                     continue;
                 end
                     
-                if isempty(regexpi(rules{iRule}, '^((~?\()?~?[a-z]\w*( ?(\|\||\&\&) ?(~?\()?~?[a-z]\w*\)?)*)?$'))
+                if isempty(regexpi(rules{iRule}, '^[(\|\|)(&&)a-z0-9_ \(\)~]*$'))
                     result = false;
                     return;
                 end
                 
                 try
-                    rule = regexprep(rules{iRule}, '([a-z0-9_]*)', 'nodeVals.$1', 'ignorecase');
+                    rule = regexprep(rules{iRule}, '([a-z]\w*)', 'nodeVals.$1', 'ignorecase');
                     [~] = eval(rule);
                 catch
                     result = false;
@@ -312,7 +312,7 @@ classdef BoolNet < synnetgen.Model
     
     methods
         function tf = isequal(this, that)
-            %that is graph
+            %that is BoolNet
             if ~isa(that, class(this))
                 tf = false;
                 return;
