@@ -81,14 +81,14 @@ Watts-Strogatz  | n, p, k    | Graph
 
 ### File formats
 Format    | Extension | Type    | Import  | Export
--------   | --------- | ------- | :-----: | :-----:
-Dot       | dot       | Graph   |         | &x2714;
-GML       | gml       | Graph   |         | &x2714; 
-GraphML   | xml       | Graph   |         | &x2714;
-MATLAB    | m         | BoolNet |         | &x2714;
-R BoolNet | bn        | BoolNet | &x2714; | &x2714;
-SBML      | xml       |         |         |
-TGF       | tgf       | Graph   | &x2714; | &x2714;
+-------   | --------- | ------- | :------: | :------:
+Dot       | dot       | Graph   |          | &#x2714;
+GML       | gml       | Graph   |          | &#x2714; 
+GraphML   | xml       | Graph   |          | &#x2714;
+MATLAB    | m         | BoolNet |          | &#x2714;
+R BoolNet | bn        | BoolNet | &#x2714; | &#x2714;
+SBML      | xml       |         |          |
+TGF       | tgf       | Graph   | &#x2714; | &#x2714;
 
 ## About SynNetGen
 
