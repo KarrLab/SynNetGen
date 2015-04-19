@@ -416,17 +416,17 @@ classdef BoolNet < synnetgen.Model
     
     methods
         function result = simulate(this, varargin)
-            %Simulate model from 0 to tMax starting with state x0 according
+            %Simulate model from 0 to tMax starting with state y0 according
             %to method with parameters p and q. See also RBN toolbox.
             
             ip = inputParser;
-            ip.addParameter('x0', randi(1, size(this.nodes)), @(x) (isnumeric(x) || islogical(x)) && iscolumn(x) && numel(x) == numel(this.nodes));
+            ip.addParameter('y0', randi(1, size(this.nodes)), @(x) (isnumeric(x) || islogical(x)) && iscolumn(x) && numel(x) == numel(this.nodes));
             ip.addParameter('tMax', 1, @(x) isnumeric(x) && x == ceil(x) && x >= 0);
             ip.addParameter('method', 'crbn', @(x) ischar(x) && ismember(x, {'crbn', 'arbn', 'darbn', 'garbn', 'dgarbn'}));
             ip.addParameter('p', ones(size(this.nodes)), @(x) isnumeric(x) && iscolumn(x) && numel(x) == numel(this.nodes));
             ip.addParameter('q', zeros(size(this.nodes)), @(x) isnumeric(x) && iscolumn(x) && numel(x) == numel(this.nodes));
             ip.parse(varargin{:});
-            x0 = ip.Results.x0;
+            y0 = ip.Results.y0;
             tMax = ip.Results.tMax;
             method = ip.Results.method;
             p = ip.Results.p;
@@ -443,7 +443,7 @@ classdef BoolNet < synnetgen.Model
                     rule = truthTables(iNode, 1:2^numel(input))';
                 end
                 node = struct(...
-                    'state', x0(iNode), ...
+                    'state', y0(iNode), ...
                     'nextState', 0, ...
                     'nbUpdates', 0, ...
                     'input', input, ...

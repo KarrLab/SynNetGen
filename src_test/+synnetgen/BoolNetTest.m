@@ -183,10 +183,10 @@ classdef BoolNetTest < matlab.unittest.TestCase
             n.setRule('c', 'b');
             
             tMax = 10;
-            x0 = [0; 0; 0];
-            vals = n.simulate('tMax', tMax, 'x0', x0);
+            y0 = [0; 0; 0];
+            vals = n.simulate('tMax', tMax, 'y0', y0);
             this.verifySize(vals, [numel(n.nodes) tMax + 1]);
-            this.verifyEqual(vals(:, 1:3:end), repmat(x0, 1, 4))
+            this.verifyEqual(vals(:, 1:3:end), repmat(y0, 1, 4))
             this.verifyEqual(vals(:, 2:3:end), repmat([1; 1; 0], 1, 4))
             this.verifyEqual(vals(:, 3:3:end), repmat([1; 0; 1], 1, 3))
         end
@@ -364,9 +364,9 @@ classdef BoolNetTest < matlab.unittest.TestCase
             func = str2func(funcName);
             this.verifyTrue(isa(func, 'function_handle'));
             
-            %x0 = struct('a', false, 'b', false, 'c', false);
-            %x1 = feval(func, x0);
-            %this.verifyEqual(x1, struct('a', true, 'b', true, 'c', false));
+            %y0 = struct('a', false, 'b', false, 'c', false);
+            %y1 = feval(func, y0);
+            %this.verifyEqual(y1, struct('a', true, 'b', true, 'c', false));
             
             delete(filename);
         end
