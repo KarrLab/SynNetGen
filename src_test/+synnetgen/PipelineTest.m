@@ -21,6 +21,13 @@ classdef PipelineTest < matlab.unittest.TestCase
             %convert to boolean network
             model4 = model3.convert('boolnet');
             
+            %simulate
+            tMax = 10;
+            result = model4.simulate('tMax', tMax);
+            figHandle = figure();
+            plot(gca, 0:tMax, result);
+            close(figHandle);
+            
             %browse through plots
             graphs = {
                 model1

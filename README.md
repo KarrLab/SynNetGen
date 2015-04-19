@@ -53,9 +53,9 @@ model3.transform('RandomizeSigns');
 model4 = model3.convert('boolnet');
 
 %simulate
-tmax = 10;
-vals = model4.simulate('x0', zeros(size(model4.nodes)), 'tmax', 10);
-plot(0:tmax, vals);
+tMax = 10;
+vals = model4.simulate('x0', zeros(size(model4.nodes)), 'tMax', tMax);
+plot(0:tMax, vals);
 
 %print and plot
 model3.display();
