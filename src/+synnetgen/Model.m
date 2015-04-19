@@ -29,6 +29,11 @@ classdef Model < handle
         that = copy(this)
     end
     
+    methods (Abstract)
+        %Simulate model
+        result = simulate(this, varargin)
+    end
+    
     methods
         function tf = eq(this, that)
             %Tests if models are equal

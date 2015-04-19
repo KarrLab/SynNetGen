@@ -409,7 +409,10 @@ classdef BoolNet < synnetgen.Model
     end
     
     methods
-        function vals = simulate(this, varargin)
+        function result = simulate(this, varargin)
+            %Simulate model from 0 to tMax starting with state x0 according
+            %to method with parameters p and q. See also RBN toolbox.
+            
             ip = inputParser;
             ip.addParameter('x0', randi(1, size(this.nodes)), @(x) (isnumeric(x) || islogical(x)) && iscolumn(x) && numel(x) == numel(this.nodes));
             ip.addParameter('tMax', 1, @(x) isnumeric(x) && x == ceil(x) && x >= 0);
@@ -449,15 +452,15 @@ classdef BoolNet < synnetgen.Model
            
             switch lower(method)
                 case 'crbn'
-                    [~, vals] = evolveCRBN(nodes, tMax, 0);
+                    [~, result] = evolveCRBN(nodes, tMax, 0);
                 case 'arbn'
-                    [~, vals] = evolveARBN(nodes, tMax, 0);
+                    [~, result] = evolveARBN(nodes, tMax, 0);
                 case 'darbn'
-                    [~, vals] = evolveDARBN(nodes, tMax, 0);
+                    [~, result] = evolveDARBN(nodes, tMax, 0);
                 case 'garbn'
-                    [~, vals] = evolveGARBN(nodes, tMax, 0);
+                    [~, result] = evolveGARBN(nodes, tMax, 0);
                 case 'dgarbn'
-                    [~, vals] = evolveDGARBN(nodes, tMax, 0);
+                    [~, result] = evolveDGARBN(nodes, tMax, 0);
             end
         end
     end    

@@ -201,6 +201,12 @@ classdef Graph < synnetgen.Model
     end
     
     methods
+        function result = simulate(this, varargin)
+            throw(MException('SynNetGen:FunctionNotDefined', 'Simulation not defined for graphs'));
+        end
+    end
+    
+    methods
         function tf = isequal(this, that)
             %Test if graphs are equal
             
