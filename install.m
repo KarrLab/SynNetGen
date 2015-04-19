@@ -44,6 +44,7 @@ addpath(fullfile(baseDir, 'lib/m2html'));
 addpath(fullfile(baseDir, 'lib/graphviz4matlab'));
 addpath(fullfile(baseDir, 'lib/graphviz4matlab/layouts'));
 addpath(fullfile(baseDir, 'lib/graphviz4matlab/util'));
+addpath(fullfile(baseDir, 'lib/RBN'));
 addpath(fullfile(baseDir, 'src'))
 addpath(baseDir)
 
@@ -72,6 +73,7 @@ if ~status
     rmpath(fullfile(baseDir, 'lib/graphviz4matlab'));
     rmpath(fullfile(baseDir, 'lib/graphviz4matlab/layouts'));
     rmpath(fullfile(baseDir, 'lib/graphviz4matlab/util'));
+    rmpath(fullfile(baseDir, 'lib/RBN'));
     rmpath(fullfile(baseDir, 'src'));
     rmpath(baseDir);
     return

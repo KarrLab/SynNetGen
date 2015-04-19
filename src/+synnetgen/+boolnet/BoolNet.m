@@ -409,6 +409,60 @@ classdef BoolNet < synnetgen.Model
     end
     
     methods
+        function vals = simulate(this, varargin)
+            ip = inputParser;
+            ip.addParameter('x0', randi(1, size(this.nodes)), @(x) (isnumeric(x) || islogical(x)) && iscolumn(x) && numel(x) == numel(this.nodes));
+            ip.addParameter('tMax', 1, @(x) isnumeric(x) && x == ceil(x) && x >= 0);
+            ip.addParameter('method', 'crbn', @(x) ischar(x) && ismember(x, {'crbn', 'arbn', 'darbn', 'garbn', 'dgarbn'}));
+            ip.addParameter('p', ones(size(this.nodes)), @(x) isnumeric(x) && iscolumn(x) && numel(x) == numel(this.nodes));
+            ip.addParameter('q', zeros(size(this.nodes)), @(x) isnumeric(x) && iscolumn(x) && numel(x) == numel(this.nodes));
+            ip.parse(varargin{:});
+            x0 = ip.Results.x0;
+            tMax = ip.Results.tMax;
+            method = ip.Results.method;
+            p = ip.Results.p;
+            q = ip.Results.q;
+            
+            nodes = [];
+            [truthTables, edges] = this.getTruthTables();
+            for iNode = 1:numel(this.nodes)
+                input = reshape(find(edges(:, iNode)), 1, []);
+                output = reshape(find(edges(iNode, :)), 1, []);
+                if numel(input) == 0
+                    rule = zeros(0, 1);
+                else
+                    rule = truthTables(iNode, 1:2^numel(input))';
+                end
+                node = struct(...
+                    'state', x0(iNode), ...
+                    'nextState', 0, ...
+                    'nbUpdates', 0, ...
+                    'input', input, ...
+                    'output', output, ...
+                    'p', p(iNode), ...
+                    'q', q(iNode), ...
+                    'lineNumber', 0, ...
+                    'rule', rule ...
+                    );
+                nodes = [nodes; node];
+            end
+           
+            switch lower(method)
+                case 'crbn'
+                    [~, vals] = evolveCRBN(nodes, tMax, 0);
+                case 'arbn'
+                    [~, vals] = evolveARBN(nodes, tMax, 0);
+                case 'darbn'
+                    [~, vals] = evolveDARBN(nodes, tMax, 0);
+                case 'garbn'
+                    [~, vals] = evolveGARBN(nodes, tMax, 0);
+                case 'dgarbn'
+                    [~, vals] = evolveDGARBN(nodes, tMax, 0);
+            end
+        end
+    end    
+    
+    methods
         function result = generate(this, extId, varargin)
             %Generates random network using various generators. See
             %synnetgen.boolnet.generator for supported algorithms and their

@@ -52,6 +52,11 @@ model3.transform('RandomizeSigns');
 %convert to boolean network
 model4 = model3.convert('boolnet');
 
+%simulate
+tmax = 10;
+vals = model4.simulate('x0', zeros(size(model4.nodes)), 'tmax', 10);
+plot(0:tmax, vals);
+
 %print and plot
 model3.display();
 model3.plot();
@@ -80,6 +85,7 @@ Format    | Extension | Type    | Import | Export
 Dot       | dot       | Graph   |        | X 
 GML       | gml       | Graph   |        | X 
 GraphML   | xml       | Graph   |        | X 
+MATLAB    | m         | BoolNet |        | X
 R BoolNet | bn        | BoolNet | X      | X
 SBML      | xml       |         |        |
 TGF       | tgf       | Graph   | X      | X 
@@ -94,6 +100,7 @@ SynNetGen was developed at the Mount Sinai School of Medicine by:
 ### Third party software included in release
 * [graphviz4matlab](https://github.com/graphviz4matlab/graphviz4matlab)
 * [M2HTML](http://www.artefact.tk/software/matlab/m2html)
+* [RBN Toolbox](http://www.teuscher-research.ch/rbntoolbox)
 
 ### License
 SynNetGen is licensed under The MIT License. See [license](LICENSE) for further information.

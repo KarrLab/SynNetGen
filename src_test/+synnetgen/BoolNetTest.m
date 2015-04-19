@@ -172,6 +172,24 @@ classdef BoolNetTest < matlab.unittest.TestCase
                 ]);
         end
         
+        function testSimulate(this)
+            n = synnetgen.boolnet.BoolNet();
+            n.addNode('a', 'A');
+            n.addNode('b', 'B');
+            n.addNode('c', 'C');
+            n.setRule('a', '~c');
+            n.setRule('b', '~a');
+            n.setRule('c', 'b');
+            
+            tMax = 10;
+            x0 = [0; 0; 0];
+            vals = n.simulate('tMax', tMax, 'x0', x0);
+            this.verifySize(vals, [numel(n.nodes) tMax + 1]);
+            this.verifyEqual(vals(:, 1:3:end), repmat(x0, 1, 4))
+            this.verifyEqual(vals(:, 2:3:end), repmat([1; 1; 0], 1, 4))
+            this.verifyEqual(vals(:, 3:3:end), repmat([1; 0; 1], 1, 3))
+        end
+        
         function testIsequal(this)
             n = synnetgen.boolnet.BoolNet();
             n.addNode('a', 'A');
