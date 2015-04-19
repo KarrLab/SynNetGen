@@ -350,9 +350,9 @@ classdef BoolNetTest < matlab.unittest.TestCase
         
         function testMATLABExport(this)
             n = synnetgen.boolnet.BoolNet();
-            n.addNode('a', 'a');
-            n.addNode('b', 'b');
-            n.addNode('c', 'c');
+            n.addNode('a', 'A');
+            n.addNode('b', 'B');
+            n.addNode('c', 'B');
             n.setRule('a', '~c');
             n.setRule('b', '~a');
             n.setRule('c', 'b');
@@ -361,12 +361,13 @@ classdef BoolNetTest < matlab.unittest.TestCase
             funcName = filename(3:end-2);
             n.export('MATLAB', 'filename', filename);
             
+            rehash();
             func = str2func(funcName);
             this.verifyTrue(isa(func, 'function_handle'));
             
-            %y0 = struct('a', false, 'b', false, 'c', false);
-            %y1 = feval(func, 0, y0);
-            %this.verifyEqual(y1, struct('a', true, 'b', true, 'c', false));
+            y0 = false(3, 1);
+            y1 = feval(func, 0, y0);
+            this.verifyEqual(y1, [true; true; false]);
             
             delete(filename);
         end
