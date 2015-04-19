@@ -80,15 +80,15 @@ Erdos-Reyni     | n, m       | Graph
 Watts-Strogatz  | n, p, k    | Graph
 
 ### File formats
-Format    | Extension | Type    | Import | Export
--------   | --------- | ------- | ------ | ------ 
-Dot       | dot       | Graph   |        | X 
-GML       | gml       | Graph   |        | X 
-GraphML   | xml       | Graph   |        | X 
-MATLAB    | m         | BoolNet |        | X
-R BoolNet | bn        | BoolNet | X      | X
-SBML      | xml       |         |        |
-TGF       | tgf       | Graph   | X      | X 
+Format    | Extension | Type    | Import  | Export
+-------   | --------- | ------- | :-----: | :-----:
+Dot       | dot       | Graph   |         | &x2714;
+GML       | gml       | Graph   |         | &x2714; 
+GraphML   | xml       | Graph   |         | &x2714;
+MATLAB    | m         | BoolNet |         | &x2714;
+R BoolNet | bn        | BoolNet | &x2714; | &x2714;
+SBML      | xml       |         |         |
+TGF       | tgf       | Graph   | &x2714; | &x2714;
 
 ## About SynNetGen
 
