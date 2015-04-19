@@ -98,9 +98,9 @@ SynNetGen was developed at the Mount Sinai School of Medicine by:
 * [Rui Chang](http://research.mssm.edu/changlab)
 
 ### Third party software included in release
-* [graphviz4matlab](https://github.com/graphviz4matlab/graphviz4matlab)
-* [M2HTML](http://www.artefact.tk/software/matlab/m2html)
-* [RBN Toolbox](http://www.teuscher-research.ch/rbntoolbox)
+* [graphviz4matlab](https://github.com/graphviz4matlab/graphviz4matlab): revision 8cbc3eaa757b2fdcb10fc10af87ee7bd8ea1d6f2
+* [M2HTML](http://www.artefact.tk/software/matlab/m2html): version 1.5
+* [RBN Toolbox](http://www.teuscher-research.ch/rbntoolbox): version 2.0
 
 ### License
 SynNetGen is licensed under The MIT License. See [license](LICENSE) for further information.
