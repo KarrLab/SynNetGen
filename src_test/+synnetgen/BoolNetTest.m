@@ -365,7 +365,7 @@ classdef BoolNetTest < matlab.unittest.TestCase
             this.verifyTrue(isa(func, 'function_handle'));
             
             %y0 = struct('a', false, 'b', false, 'c', false);
-            %y1 = feval(func, y0);
+            %y1 = feval(func, 0, y0);
             %this.verifyEqual(y1, struct('a', true, 'b', true, 'c', false));
             
             delete(filename);

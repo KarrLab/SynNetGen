@@ -34,7 +34,7 @@ classdef MATLABExporter < synnetgen.extension.Extension
                 throw(MException('SynNetGen:UnableToOpenFile', 'Unable to open file %s', filename));
             end
             
-            fprintf(fid, 'function y1 = updateModel(y0)\n');
+            fprintf(fid, 'function y1 = updateModel(t, y0)\n');
             fprintf(fid, 'y1 = y0;\n');
             for iNode = 1:numel(boolnet.nodes)                
                 if ~isempty(boolnet.rules{iNode})
