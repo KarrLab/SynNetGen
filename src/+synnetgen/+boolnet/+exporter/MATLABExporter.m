@@ -1,12 +1,11 @@
-%Exports network to R BoolNet format
-%(http://cran.r-project.org/package=BoolNet).
+%Exports network to MATLAB function
 %
 %@author  Jonathan Karr, karr@mssm.edu
 %@date    2015-04-18
 classdef MATLABExporter < synnetgen.extension.Extension
     properties (Constant)
         id = 'MATLAB'
-        description = 'MATLAB exporter'
+        description = 'MATLAB function exporter'
         inputs = struct(...            
             'filename', 'File name' ...
             )
