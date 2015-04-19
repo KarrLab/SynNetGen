@@ -11,6 +11,10 @@ classdef ExtensionRunner < handle
             validateattributes(pkgId, {'char'}, {'nonempty', 'row'});
             extensions = repmat(struct('id', [], 'description', [], 'class', [], 'inputs', [], 'outputs', []), 0, 1);
             pkg = meta.package.fromName(pkgId);
+            if isempty(pkg)
+                throw(MException('SynNetGen:InvalidArgument', 'Package does not exist'))
+            end
+                
             for iClass = 1:numel(pkg.ClassList)
                 if any(ismember('synnetgen.extension.Extension', {pkg.ClassList(iClass).SuperclassList.Name}))
                     iProp = find(strcmp('id', {pkg.ClassList(iClass).PropertyList.Name}), 1, 'first');
@@ -45,6 +49,10 @@ classdef ExtensionRunner < handle
             
             extClass = [];
             pkg = meta.package.fromName(pkgId);
+            if isempty(pkg)
+                throw(MException('SynNetGen:InvalidArgument', 'Package does not exist'))
+            end
+            
             for iClass = 1:numel(pkg.ClassList)
                 if any(ismember('synnetgen.extension.Extension', {pkg.ClassList(iClass).SuperclassList.Name}))
                     iProp = find(strcmp('id', {pkg.ClassList(iClass).PropertyList.Name}), 1, 'first');
