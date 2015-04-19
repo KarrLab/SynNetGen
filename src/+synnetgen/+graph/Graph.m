@@ -9,6 +9,8 @@
 %  - disp, print, plot
 %- Static methods
 %  - generate: from one of several distributions
+%  - transform: using one of several methods
+%  - convert: to other types of models
 %  - import: from one of several file formats
 %  - export: to one of several file formats
 %
