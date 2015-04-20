@@ -153,11 +153,21 @@ classdef Odes < synnetgen.Model
             %parameter values k
             
             ip = inputParser;
-            ip.addParameter('y', ones(size(this.nodes)), @(x) isnumeric(x) && iscolumn(x) && numel(x) == numel(this.nodes));
-            ip.addParameter('k', ones(size(this.parameters)), @(x) isnumeric(x) && iscolumn(x) && numel(x) == numel(this.parameters));
+            ip.addParameter('y', []);
+            ip.addParameter('k', []);
             ip.parse(varargin{:});
             y = ip.Results.y;
             k = ip.Results.k;
+            
+            if isempty(y)
+                y = ones(size(this.parameters));
+            end
+            if isempty(k)
+                k = ones(size(this.nodes));
+            end
+            
+            validateattributes(y, {'numeric'}, {'column', 'nrows', numel(this.nodes)});
+            validateattributes(k, {'numeric'}, {'column', 'nrows', numel(this.parameters)});
             
             edges = zeros(numel(this.nodes));
             for iNode = 1:numel(this.nodes)
@@ -353,10 +363,29 @@ classdef Odes < synnetgen.Model
         function figHandle = plot(this, varargin)
             %Generates plot of ODE model
             %  Options:
+            %  - y: node values
+            %  - k: parameter values
             %  - layout: see graphviz4matlab\layouts
             %  - nodeColors
             
-            graph = this.convert('graph');
+            opts = struct(varargin{:});
+            if isfield(opts, 'y')
+                y = opts.y;
+                opts = rmfield(opts, 'y');
+            end
+            if isfield(opts, 'k')
+                k = opts.k;
+                opts = rmfield(opts, 'k');
+            end
+            
+            graph = this.convert('graph', 'y', y, 'k', k);
+            
+            optNames = fieldnames(opts);
+            varargin = cell(1, 2 * numel(optNames));
+            for i = 1:numel(optNames)
+                varargin{2*i-1} = optNames{i};
+                varargin{2*i} = opts.(optNames{i});
+            end
             figHandle = graph.plot(varargin{:});
         end
     end

@@ -19,10 +19,14 @@ classdef GraphConverter < synnetgen.extension.Extension
             validateattributes(odes, {'synnetgen.odes.Odes'}, {'scalar'});
             
             ip = inputParser;
+            ip.addParameter('y', []);
+            ip.addParameter('k', []);
             ip.parse(varargin{:});
+            y = ip.Results.y;
+            k = ip.Results.k;
             
             %convert to graph
-            graph = Graph(odes.nodes, odes.getEdges());
+            graph = Graph(odes.nodes, odes.getEdges('y', y, 'k', k));
         end
     end
 end
