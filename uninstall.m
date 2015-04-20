@@ -16,6 +16,7 @@ end
 
 %remove source, test code from path
 rmpath(fullfile(baseDir, 'src_test'));
+rmpath(fullfile(baseDir, 'doc'))
 rmpath(fullfile(baseDir, 'lib/m2html'));
 rmpath(fullfile(baseDir, 'lib/graphviz4matlab'));
 rmpath(fullfile(baseDir, 'lib/graphviz4matlab/layouts'));

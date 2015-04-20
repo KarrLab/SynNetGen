@@ -30,7 +30,7 @@ Package                                                                    | Tes
     
 ## Getting started
 
-The following example illustrates how to use this package:
+[`example.m`](doc/example.m) illustrates how to use this package:
 
 1. Create a random unsigned, undirected graph
 2. Randomize the directions and signs to create a random signed, directed graph
@@ -38,61 +38,6 @@ The following example illustrates how to use this package:
 4. Convert Boolean network to dynamical ODE model
 5. Print and plot the graphs and network
 6. Export the graphs and network
-
-```matlab
-%generate undirected, unsigned graph
-model1 = synnetgen.graph.Graph();
-model1.generate('barabasi-albert', 'n', 10, 'm', 3);
-
-%make directed
-model2 = model1.copy();
-model2.setEdges(triu(model1.edges));
-model2.transform('RandomizeDirections');
-
-%make signed
-model3 = model2.copy();
-model3.transform('RandomizeSigns');
-
-%convert to boolean network
-model4 = model3.convert('boolnet');
-
-%convert to ODE model
-model5 = model4.convert('grn-ode');
-model6 = model4.convert('grn-protein-ode');
-
-%simulate boolean network and ODE models
-tMax = 10;
-vals = model4.simulate('y0', false(size(model4.nodes)), 'tMax', tMax);
-plot(0:tMax, vals);
-
-tMax = 10;
-tStep = 0.1;
-vals = model5.simulate('y0', ones(size(model5.nodes)), 'k', ones(size(model5.parameters)), 'tMax', tMax, 'tStep', tStep);
-plot(0:tStep:tMax, vals);
-
-tMax = 10;
-tStep = 0.1;
-vals = model6.simulate('y0', ones(size(model6.nodes)), 'k', ones(size(model6.parameters)), 'tMax', tMax, 'tStep', tStep);
-plot(0:tStep:tMax, vals);
-
-%print and plot
-model3.display();
-model3.plot();
-
-model4.display();
-model4.plot();
-
-model5.display();
-model5.plot();
-
-model6.display();
-model6.plot();
-
-%export
-model3.export('tgf', 'model3.tgf');
-model4.export('R-BoolNet', 'model4.bn');
-model5.export('sbml', 'model5.xml');
-```
 
 ## Documentation
 

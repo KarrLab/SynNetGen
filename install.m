@@ -40,6 +40,7 @@ end
 
 %% add source, test code to path
 addpath(fullfile(baseDir, 'src_test'));
+addpath(fullfile(baseDir, 'doc'))
 addpath(fullfile(baseDir, 'lib/m2html'));
 addpath(fullfile(baseDir, 'lib/graphviz4matlab'));
 addpath(fullfile(baseDir, 'lib/graphviz4matlab/layouts'));
@@ -70,6 +71,7 @@ end
 %undo path if not successful
 if ~status
     rmpath(fullfile(baseDir, 'src_test'));
+    rmpath(fullfile(baseDir, 'doc'))
     rmpath(fullfile(baseDir, 'lib/m2html'));
     rmpath(fullfile(baseDir, 'lib/graphviz4matlab'));
     rmpath(fullfile(baseDir, 'lib/graphviz4matlab/layouts'));
