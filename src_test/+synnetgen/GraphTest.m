@@ -217,6 +217,17 @@ classdef GraphTest < matlab.unittest.TestCase
             this.verifyEqual(triu(g.edges), tril(g.edges)');
         end
         
+        function testGenerateBollobasPairingModel(this)
+            import synnetgen.graph.Graph;
+            
+            n = 10;
+            k = 3;
+            g = Graph();
+            g.generate('bollobas-pairing-model', 'n', n, 'k', k);
+            this.verifyEqual(n, numel(g.nodes));
+            this.verifyEqual(k * ones(1, n), sum(g.edges, 1));
+        end
+        
         function testGenerateEdgarGilbert(this)
             import synnetgen.graph.Graph;
             

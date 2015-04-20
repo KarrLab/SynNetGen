@@ -26,8 +26,9 @@ classdef ExtensionRunnerTest < matlab.unittest.TestCase
             synnetgen.extension.ExtensionRunner.get('synnetgen.graph.exporter', 'tgf');
             
             synnetgen.extension.ExtensionRunner.get('synnetgen.graph.generator', 'barabasi-albert');
+            synnetgen.extension.ExtensionRunner.get('synnetgen.graph.generator', 'bollobas-pairing-model');
             synnetgen.extension.ExtensionRunner.get('synnetgen.graph.generator', 'edgar-gilbert');
-            synnetgen.extension.ExtensionRunner.get('synnetgen.graph.generator', 'erdos-reyni');            
+            synnetgen.extension.ExtensionRunner.get('synnetgen.graph.generator', 'erdos-reyni');
             synnetgen.extension.ExtensionRunner.get('synnetgen.graph.generator', 'watts-strogatz');
             
             synnetgen.extension.ExtensionRunner.get('synnetgen.graph.importer', 'tgf');
