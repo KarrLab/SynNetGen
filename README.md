@@ -98,7 +98,7 @@ model5.export('sbml', 'model5.xml');
 
 ### Overview
 
-![Package overview](https://github.com/jonrkarr/synnetgen/raw/master/doc/Overview.png)
+![Package overview](doc/Overview.png?raw=true)
 
 The package provides three model classes: Graph, BoolNet, and Odes to represent graphs, Boolean networks, and orindary differential (ODE) models. Each class provides methods for:
 * `setNodesAndEdges`, `setNodesAndRules`, `setNodesAndDifferentials`: Adding and setting node and edges/rules/differentials
