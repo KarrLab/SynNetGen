@@ -148,16 +148,24 @@ classdef Odes < synnetgen.Model
             this.differentials = differentials;
         end
         
-        function edges = getEdges(this)
-            %Calculates signed, directed graph
+        function edges = getEdges(this, varargin)
+            %Calculates signed, directed graph at node values y and
+            %parameter values k
+            
+            ip = inputParser;
+            ip.addParameter('y', ones(size(this.nodes)), @(x) isnumeric(x) && iscolumn(x) && numel(x) == numel(this.nodes));
+            ip.addParameter('k', ones(size(this.parameters)), @(x) isnumeric(x) && iscolumn(x) && numel(x) == numel(this.parameters));
+            ip.parse(varargin{:});
+            y = ip.Results.y;
+            k = ip.Results.k;
             
             edges = zeros(numel(this.nodes));
             for iNode = 1:numel(this.nodes)
-                edges(:, iNode) = this.getNodeEdges(this.nodes(iNode).id);
+                edges(:, iNode) = this.getNodeEdges(this.nodes(iNode).id, 'y', y, 'k', k);
             end
         end
         
-        function edges = getNodeEdges(this, nodeId)
+        function edges = getNodeEdges(this, nodeId, varargin)
             %Calculates signed, directed graph for one node
             
             %parse arguments
@@ -166,11 +174,27 @@ classdef Odes < synnetgen.Model
                 throw(MException('SynNetGen:InvalidArgument', 'No node with id ''%s''', nodeId));
             end
             
+            ip = inputParser;
+            ip.addParameter('y', ones(size(this.nodes)), @(x) isnumeric(x) && iscolumn(x) && numel(x) == numel(this.nodes));
+            ip.addParameter('k', ones(size(this.parameters)), @(x) isnumeric(x) && iscolumn(x) && numel(x) == numel(this.parameters));
+            ip.parse(varargin{:});
+            y = ip.Results.y;
+            k = ip.Results.k;
+            
             %eliminate spaces
             differential = sym(this.differentials{iNode});
             
-            %TODO: differentiate differential with respect to each node and
-            %evaluate at y0, k
+            %differentiate differential with respect to each node and
+            %evaluate at y, k
+            nameIds = [{this.nodes.id} {this.parameters.id}];
+            namedVals = [y' k'];
+            diffVals = zeros(numel(this.nodes), 1);
+            for iNode = 1:numel(this.nodes)
+                diffVals(iNode) = feval(matlabFunction(subs(diff(differential, this.nodes(iNode).id), nameIds, namedVals)));
+            end
+            edges = zeros(numel(this.nodes), 1);
+            edges(diffVals > 0) =  1;
+            edges(diffVals < 0) = -1;
         end
     end
     

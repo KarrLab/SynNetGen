@@ -118,9 +118,34 @@ classdef OdesTest < matlab.unittest.TestCase
             this.verifyEqual(m.differentials, differentials);
         end
         
-        %TODO
-%         getEdges
-%         getNodeEdges
+        function testGetEdges(this)
+            mdl = synnetgen.odes.Odes();
+            mdl.addNode('a', 'A');
+            mdl.addNode('b', 'B');
+            mdl.addNode('c', 'C');
+            mdl.addParameter('k', 'K');
+            mdl.addParameter('l', 'L');
+            mdl.addParameter('m', 'M');
+            mdl.setDifferential('a', 'a^2 - (a*b/c) - 1');
+            mdl.setDifferential('b', 'a*b - c');
+            mdl.setDifferential('c', 'c - b^k');
+            
+            a = 2;
+            b = 3;
+            c = 5;
+            k = 7;
+            l = 11;
+            m = 13;
+            edges = [
+                2*a-b/c   b   0
+                -a/c      a   -k*b^(k-1)
+                a*b/c^2   -1  1
+                ];
+            edges(edges > 0) =  1;
+            edges(edges < 0) = -1;
+            
+            this.verifyEqual(mdl.getEdges('y', [a; b; c], 'k', [k; l; m]), edges);
+        end
 
         function testIsequal(this)
             m = synnetgen.odes.Odes();
@@ -207,21 +232,21 @@ classdef OdesTest < matlab.unittest.TestCase
         end
         
         function testPlot(this)
-            %TODO: enable
-            return
-            
             m = synnetgen.odes.Odes();
             m.addNode('a', 'A');
             m.addNode('b', 'B');
             m.addNode('c', 'C');
-            m.setDifferential('a', 'b - c');
-            m.setDifferential('b', 'a + c');
+            m.addParameter('k', 'K');
+            m.addParameter('l', 'L');
+            m.addParameter('m', 'M');
+            m.setDifferential('a', '-c');
+            m.setDifferential('b', 'a');
             m.setDifferential('c', 'a * b');
             
-            h = n.plot();
+            h = m.plot();
             close(h);
         end
-
+        
         function testSimulate(this)
             m = synnetgen.odes.Odes();
             m.addNode('a', 'A');
@@ -268,11 +293,8 @@ classdef OdesTest < matlab.unittest.TestCase
             mdl = m.convert('SimBiology');
             this.verifyClass(mdl, 'SimBiology.Model');
         end
-                
+        
         function testConvertToGraph(this)
-            %TODO: enable
-            return;
-            
             m = synnetgen.odes.Odes();
             m.addNode('a', 'A');
             m.addNode('b', 'B');
@@ -285,8 +307,9 @@ classdef OdesTest < matlab.unittest.TestCase
             m.setDifferential('c', 'a^l * b');
             
             g = m.convert('graph');
+            this.verifyClass(g, 'synnetgen.graph.Graph');
         end
-
+        
         function testMATLABExport(this)
             m = synnetgen.odes.Odes();
             m.addNode('a', 'A');
