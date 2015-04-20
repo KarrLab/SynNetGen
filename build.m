@@ -40,6 +40,10 @@ if ~exist('doc', 'dir')
     mkdir('doc');
 end
 
+if ~exist('doc/example', 'dir')
+    mkdir('doc/example');
+end
+
 if exist('doc/m2html', 'dir')
     rmdir('doc/m2html', 's');
 end
