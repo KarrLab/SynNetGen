@@ -35,9 +35,11 @@ Package                                                                    | Tes
 1. Create a random unsigned, undirected graph
 2. Randomize the directions and signs to create a random signed, directed graph
 3. Convert the graph to a random Boolean network
-4. Convert Boolean network to dynamical ODE model
-5. Print and plot the graphs and network
-6. Export the graphs and network
+4. Convert Boolean network to dynamical ODE models
+5. Simulate ODE model
+6. Calculate steady state of ODE model
+7. Print and plot the graphs, network, and ODE models
+8. Export the graphs, network, and ODE models
 
 ## Documentation
 
