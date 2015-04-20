@@ -7,7 +7,7 @@ classdef SBMLExporter < synnetgen.extension.Extension
     properties (Constant)
         id = 'sbml'
         description = 'SBML exporter'
-        inputs = struct(...            
+        inputs = struct(...
             'filename', 'File name' ...
             )
         outputs = struct (...
@@ -30,17 +30,7 @@ classdef SBMLExporter < synnetgen.extension.Extension
             end
             
             %% export
-            model = sbiomodel('BoolNet');
-            
-            for iNode = 1:numel(boolnet.nodes)
-                model.addspecies(boolnet.nodes(iNode).id);
-                if ~isempty(boolnet.rules{iNode})
-                    rule = boolnet.rules{iNode};
-                    model.addrule('RuleType', 'repeatedAssignment', ...
-                        'Rule', sprintf('%s = %s', boolnet.nodes(iNode).id, strrep(rule, '~', '-')));
-                end
-            end
-            
+            model = boolnet.convert('SimBiology');
             sbmlexport(model, filename);
             
             status = true;
