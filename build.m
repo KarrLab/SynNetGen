@@ -36,7 +36,7 @@ end
 
 %% compile documentation
 %create output directories
-if exist('doc', 'dir')
+if ~exist('doc', 'dir')
     mkdir('doc');
 end
 
