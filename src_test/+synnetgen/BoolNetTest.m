@@ -373,8 +373,6 @@ classdef BoolNetTest < matlab.unittest.TestCase
         end
         
         function testSBMLExportAndImport(this)
-            this.assumeTrue(exist('synnetgen.boolnet.importer.SBMLImporter', 'class'), 'SBML importer must be implemented')
-            
             n = synnetgen.boolnet.BoolNet();
             n.addNode('a', 'a');
             n.addNode('b', 'b');
@@ -389,7 +387,8 @@ classdef BoolNetTest < matlab.unittest.TestCase
             n.setRule('e', '~(d && e) && (c && d)');
             n.setRule('f', '~(f || e) && (a || c)');
             
-            filename = tempname();
+            %filename = [tempname() '.xml'];
+            filename = 'test.xml';
             n.export('sbml', 'filename', filename);
             m = synnetgen.boolnet.BoolNet();
             m = m.import('sbml', 'filename', filename);
