@@ -325,11 +325,125 @@ classdef BoolNetTest < matlab.unittest.TestCase
         end
         
         function testConvertToGrnOdes(this)
-            %TODO
+            %% Ex 1
+            n = synnetgen.boolnet.BoolNet();
+            n.addNode('a', 'A');
+            n.addNode('b', 'B');
+            n.setRule('a', 'a');
+            n.setRule('b', 'a || b');
+            
+            autoM = n.convert('grn-ode');
+            
+            m = synnetgen.odes.Odes();
+            m.addNode('r_a', 'RNA a');
+            m.addNode('r_b', 'RNA b');
+            
+            m.addParameter('V_max_r_a', 'Maximum transcription rate of gene a');
+            m.addParameter('V_rel_on_r_a', 'Relative transcription rate of gene a when enhanced [0-1]');
+            m.addParameter('V_rel_off_r_a', 'Releative transcription rate of gene a when repressed [0-1]');
+            m.addParameter('K_r_a', 'Transcription factor binding site affinity of protein a');
+            m.addParameter('n_r_a', 'Hill coefficient of gene a');
+            m.addParameter('tau_r_a', 'Half-life of RNA a');
+            
+            m.addParameter('V_max_r_b', 'Maximum transcription rate of gene b');
+            m.addParameter('V_rel_on_r_b', 'Relative transcription rate of gene b when enhanced [0-1]');
+            m.addParameter('V_rel_off_r_b', 'Releative transcription rate of gene b when repressed [0-1]');
+            m.addParameter('K_r_b', 'Transcription factor binding site affinity of protein b');
+            m.addParameter('n_r_b', 'Hill coefficient of gene b');
+            m.addParameter('tau_r_b', 'Half-life of RNA b');
+            
+            m.setDifferential('r_a', 'V_max_r_a * (V_rel_off_r_a + V_rel_on_r_a * (r_a/K_r_a)^n_r_a)/(1 + (r_a/K_r_a)^n_r_a) - 0.6931/tau_r_a * r_a');
+            m.setDifferential('r_b', 'V_max_r_b * (V_rel_off_r_b + V_rel_on_r_b * (r_a/K_r_a)^n_r_a + V_rel_on_r_b * (r_b/K_r_b)^n_r_b + V_rel_on_r_b * (r_a/K_r_a)^n_r_a * (r_b/K_r_b)^n_r_b)/(1 + (r_a/K_r_a)^n_r_a + (r_b/K_r_b)^n_r_b + (r_a/K_r_a)^n_r_a * (r_b/K_r_b)^n_r_b) - 0.6931/tau_r_b * r_b');
+            
+            this.verifyEqual(autoM, m);
+            
+            %% Ex 2
+            n = synnetgen.boolnet.BoolNet();
+            n.addNode('a', 'A');
+            n.addNode('b', 'B');
+            n.addNode('c', 'B');
+            n.setRule('a', 'c');
+            n.setRule('b', 'a');
+            n.setRule('c', 'b');
+            
+            m = n.convert('grn-ode');
+            %n.plot();
+            
+            y = [0; 0; 0];
+            k = [1; 1; 0.1; 1; 1; 1; 1; 1; 0.1; 1; 1; 1; 1; 1; 0.1; 1; 1; 1;];
+            %m.plot('y', y, 'k', k);
+            
+            this.verifyEqual(m.getEdges('y', y, 'k', k), n.getEdges() - eye(3));
+            
+            %% Ex 3
+            n = synnetgen.boolnet.BoolNet();
+            n.addNode('a', 'A');
+            n.addNode('b', 'B');
+            n.addNode('c', 'C');
+            n.addNode('d', 'D');
+            n.setRule('a', 'a');
+            n.setRule('b', 'b');
+            n.setRule('c', 'a || b');
+            n.setRule('d', 'c && d');
+            
+            m = n.convert('grn-ode');
+            this.verifyClass(m, 'synnetgen.odes.Odes');
         end
         
         function testConvertToGrnProteinOdes(this)
-            %TODO
+            %% Ex 1
+            n = synnetgen.boolnet.BoolNet();
+            n.addNode('a', 'A');
+            n.addNode('b', 'B');
+            n.setRule('a', 'a');
+            n.setRule('b', 'a || b');
+            
+            autoM = n.convert('grn-protein-ode');
+            
+            m = synnetgen.odes.Odes();
+            m.addNode('r_a', 'RNA a');
+            m.addNode('r_b', 'RNA b');
+            m.addNode('p_a', 'Protein a');
+            m.addNode('p_b', 'Protein b');
+            
+            m.addParameter('V_max_r_a', 'Maximum transcription rate of gene a');
+            m.addParameter('V_rel_on_r_a', 'Relative transcription rate of gene a when enhanced [0-1]');
+            m.addParameter('V_rel_off_r_a', 'Releative transcription rate of gene a when repressed [0-1]');
+            m.addParameter('K_r_a', 'Transcription factor binding site affinity of protein a');
+            m.addParameter('n_r_a', 'Hill coefficient of gene a');
+            m.addParameter('tau_r_a', 'Half-life of RNA a');
+            m.addParameter('V_max_p_a', 'Maximum translation rate of gene a');
+            m.addParameter('tau_p_a', 'Half-life of protein a');
+            
+            m.addParameter('V_max_r_b', 'Maximum transcription rate of gene b');
+            m.addParameter('V_rel_on_r_b', 'Relative transcription rate of gene b when enhanced [0-1]');
+            m.addParameter('V_rel_off_r_b', 'Releative transcription rate of gene b when repressed [0-1]');
+            m.addParameter('K_r_b', 'Transcription factor binding site affinity of protein b');
+            m.addParameter('n_r_b', 'Hill coefficient of gene b');
+            m.addParameter('tau_r_b', 'Half-life of RNA b');
+            m.addParameter('V_max_p_b', 'Maximum translation rate of gene b');
+            m.addParameter('tau_p_b', 'Half-life of protein b');
+            
+            m.setDifferential('r_a', 'V_max_r_a * (V_rel_off_r_a + V_rel_on_r_a * (p_a/K_r_a)^n_r_a)/(1 + (p_a/K_r_a)^n_r_a) - 0.6931/tau_r_a * r_a');
+            m.setDifferential('r_b', 'V_max_r_b * (V_rel_off_r_b + V_rel_on_r_b * (p_a/K_r_a)^n_r_a + V_rel_on_r_b * (p_b/K_r_b)^n_r_b + V_rel_on_r_b * (p_a/K_r_a)^n_r_a * (p_b/K_r_b)^n_r_b)/(1 + (p_a/K_r_a)^n_r_a + (p_b/K_r_b)^n_r_b + (p_a/K_r_a)^n_r_a * (p_b/K_r_b)^n_r_b) - 0.6931/tau_r_b * r_b');
+            m.setDifferential('p_a', 'V_max_p_a * r_a - 0.6931/tau_p_a * p_a');
+            m.setDifferential('p_b', 'V_max_p_b * r_b - 0.6931/tau_p_b * p_b');
+            
+            this.verifyEqual(autoM, m);
+            
+            %% Ex 2
+            n = synnetgen.boolnet.BoolNet();
+            n.addNode('a', 'A');
+            n.addNode('b', 'B');
+            n.addNode('c', 'C');
+            n.addNode('d', 'D');
+            n.setRule('a', 'a');
+            n.setRule('b', 'b');
+            n.setRule('c', 'a || b');
+            n.setRule('d', 'c && d');
+            
+            m = n.convert('grn-protein-ode');
+            this.verifyClass(m, 'synnetgen.odes.Odes');
         end
         
         function testRBoolNetExportImport(this)
