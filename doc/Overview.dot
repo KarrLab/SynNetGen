@@ -1,0 +1,53 @@
+digraph Overview {
+    rankdir = "LR";
+    node [fontname="Arial", fontsize=10, width=1, fixedsize=true];
+    edge [fontname="Arial", fontsize=8];
+    
+    /* Model types */
+    Parameters [shape=none, label="", width=0, pos="-0.5,1!"];
+    DirectedGraph [label="Graph", style="filled", color="blue", fillcolor="deepskyblue", pos="0.75,1!"];
+    BoolNet [label="BoolNet", style="filled", color="blue", fillcolor="deepskyblue", pos="2.5,1!"];
+    Odes [label="Odes", style="filled", color="blue", fillcolor="deepskyblue", pos="4.25,1!"];
+    
+    /* Convert */    
+    DirectedGraph -> BoolNet [label="Convert"];
+    BoolNet -> Odes [label="Convert"];
+    
+    BoolNetToDirectedGraph [shape="none", label="Convert", width=0, height=0.35, pos="1.625,0.85!", fontcolor="grey", labelloc="b"];
+    BoolNet -> BoolNetToDirectedGraph [color="grey", dir="none"];
+    BoolNetToDirectedGraph -> DirectedGraph [color="grey"];
+    
+    OdesToDirectedGraph [shape="none", label="Convert", width=0, height=0.35, pos="2.75,0.5!", fontcolor="grey", labelloc="b"];
+    Odes -> OdesToDirectedGraph [color="grey", dir="none"];
+    OdesToDirectedGraph -> DirectedGraph [color="grey"];
+    
+    /*BoolNet -> DirectedGraph [label="Convert", color="grey", fontcolor="grey"];*/
+    /*Odes -> DirectedGraph [label="Convert", color="grey", fontcolor="grey"];*/
+    
+    /* Generate */
+    Parameters -> DirectedGraph [label="Generate"];
+    
+    /* Transforms */
+    Transform [shape=none, label="Transform", width=0, height=0.35, pos="0.75,0.55!", fontcolor="grey", labelloc="b"];
+    {
+        rank=same; 
+        DirectedGraph -> Transform [color="grey", dir="none"];
+        Transform -> DirectedGraph [color="grey"];
+    }
+    
+    /* Simulate */
+    BoolNetData [label="Synthetic data", style="filled", color="grey", fillcolor="gray97", fontcolor="grey", pos="2.5,-0.10!"];
+    OdesData [label="Synthetic data", style="filled", color="black", fillcolor="grey", pos="6,1!"];    
+    {rank=same; BoolNet -> BoolNetData [label="Simulate", color="grey", fontcolor="grey"];}
+    Odes -> OdesData [label="Simulate"];
+    
+    /* Export/import */
+    GraphFile [shape=none, label="", width=0, pos="0.75,2!"];
+    BoolNetFile [shape=none, label="", width=0, pos="2.5,2!"];
+    OdesFile [shape=none, label="", width=0, pos="4.25,2!"];
+    
+    {rank=same; DirectedGraph -> GraphFile [label="Import/\nExport", color="grey", fontcolor="grey", dir="both"];}
+    {rank=same; BoolNet -> BoolNetFile [label="Import/\nExport", color="grey", fontcolor="grey", dir="both"];}
+    {rank=same; Odes -> OdesFile [label="Import/\nExport", color="grey", fontcolor="grey", dir="both"];}
+    
+}

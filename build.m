@@ -45,8 +45,6 @@ if exist('doc/m2html', 'dir')
 end
 mkdir('doc/m2html');
 
-%TODO: generate overview diagram
-
 %generate source documentation
 baseDirAbs = fileparts(mfilename('fullpath'));
 tmp = strsplit(baseDirAbs, filesep);
