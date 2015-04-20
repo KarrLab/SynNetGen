@@ -33,6 +33,11 @@ classdef ExtensionRunnerTest < matlab.unittest.TestCase
             synnetgen.extension.ExtensionRunner.get('synnetgen.graph.transform', 'RandomizeSigns');
             synnetgen.extension.ExtensionRunner.get('synnetgen.graph.transform', 'RemoveDirections');
             synnetgen.extension.ExtensionRunner.get('synnetgen.graph.transform', 'RemoveSigns');
+            
+            synnetgen.extension.ExtensionRunner.get('synnetgen.odes.converter', 'graph');
+            synnetgen.extension.ExtensionRunner.get('synnetgen.odes.exporter', 'MATLAB');
+            synnetgen.extension.ExtensionRunner.get('synnetgen.odes.exporter', 'SBML');
+            synnetgen.extension.ExtensionRunner.get('synnetgen.odes.importer', 'SBML');
         end
         
         function testList(this)
@@ -51,6 +56,12 @@ classdef ExtensionRunnerTest < matlab.unittest.TestCase
             synnetgen.extension.ExtensionRunner.list('synnetgen.graph.generator');
             synnetgen.extension.ExtensionRunner.list('synnetgen.graph.importer');
             synnetgen.extension.ExtensionRunner.list('synnetgen.graph.transform');
+            
+            synnetgen.extension.ExtensionRunner.list('synnetgen.odes.converter');
+            synnetgen.extension.ExtensionRunner.list('synnetgen.odes.exporter');
+            synnetgen.extension.ExtensionRunner.list('synnetgen.odes.generator');
+            synnetgen.extension.ExtensionRunner.list('synnetgen.odes.importer');
+            synnetgen.extension.ExtensionRunner.list('synnetgen.odes.transform');
         end
     end
 end
