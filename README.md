@@ -62,17 +62,17 @@ model6 = model4.convert('grn-protein-ode');
 
 %simulate boolean network and ODE models
 tMax = 10;
-vals = model4.simulate('x0', zeros(size(model4.nodes)), 'tMax', tMax);
+vals = model4.simulate('y0', false(size(model4.nodes)), 'tMax', tMax);
 plot(0:tMax, vals);
 
 tMax = 10;
 tStep = 0.1;
-vals = model5.simulate('x0', zeros(size(model4.nodes)), 'tMax', tMax, 'tStep', tStep);
+vals = model5.simulate('y0', ones(size(model5.nodes)), 'k', ones(size(model5.parameters)), 'tMax', tMax, 'tStep', tStep);
 plot(0:tStep:tMax, vals);
 
 tMax = 10;
 tStep = 0.1;
-vals = model6.simulate('x0', zeros(size(model4.nodes)), 'tMax', tMax, 'tStep', tStep);
+vals = model6.simulate('y0', ones(size(model6.nodes)), 'k', ones(size(model6.parameters)), 'tMax', tMax, 'tStep', tStep);
 plot(0:tStep:tMax, vals);
 
 %print and plot
