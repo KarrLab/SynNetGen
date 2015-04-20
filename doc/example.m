@@ -2,15 +2,18 @@
 %1. Create a random unsigned, undirected graph
 %2. Randomize the directions and signs to create a random signed, directed graph
 %3. Convert the graph to a random Boolean network
-%4. Convert Boolean network to dynamical ODE model
-%5. Print and plot the graphs and network
-%6. Export the graphs and network
+%4. Convert Boolean network to dynamical ODE models
+%5. Simulate ODE model
+%6. Calculate steady state of ODE model
+%7. Print and plot the graphs, network, and ODE models
+%8. Export the graphs, network, and ODE models
 %
 %@author  Jonathan Karr, karr@mssm.edu
 %@date    2015-04-20
-function example()
-%desired network size
-n = 5;
+function graphs = example(n)
+if nargin == 0
+    n = 5;
+end
 
 %generate undirected, unsigned graph
 graph1 = synnetgen.graph.Graph();
@@ -40,11 +43,6 @@ k6 = repmat([1; 1; 0.1; 1; 1; 1; 1; 1], n, 1);
 
 graph5 = model5.convert('graph', 'y', y5, 'k', k5);
 graph6 = model6.convert('graph', 'y', y6, 'k', k6);
-this.verifyEqual(graph5.edges, graph4.edges - eye(n));
-this.verifyEqual(graph6.edges(1:n, 1:n), -eye(n))
-this.verifyEqual(graph6.edges(n+1:end, n+1:end), -eye(n))
-this.verifyEqual(graph6.edges(1:n, 1:n) + graph6.edges(n+1:end, 1:n), graph5.edges);
-this.verifyEqual(graph6.edges(1:n, n+1:end), eye(n));
 
 %simulate boolean network
 tMax = 10;
@@ -61,8 +59,8 @@ figHandle = figure();
 plot(gca, 0:tStep:tMax, result);
 close(figHandle);
 
-%calculate ODE steady-state
-steadyState = model5.calcSteadyState('y0', y5, 'k', k5);
+%TODO: calculate ODE steady-state
+% steadyState = model5.calcSteadyState('y0', y5, 'k', k5);
 
 %browse through plots
 graphs = [
@@ -80,7 +78,27 @@ for i = 1:numel(graphs)
 end
 
 %export
-graph3.export('tgf', 'model3.tgf');
-model4.export('R-BoolNet', 'model4.bn');
-model5.export('sbml', 'model5.xml');
-model6.export('matlab', 'model5.m');
+graph1.export('dot', 'filename', 'doc/example/model1.dot');
+graph1.export('gml', 'filename', 'doc/example/model1.gml');
+graph1.export('graphml', 'filename', 'doc/example/model1.xml');
+graph1.export('tgf', 'filename', 'doc/example/model1.tgf');
+
+graph2.export('dot', 'filename', 'doc/example/model2.dot');
+graph2.export('gml', 'filename', 'doc/example/model2.gml');
+graph2.export('graphml', 'filename', 'doc/example/model2.xml');
+graph2.export('tgf', 'filename', 'doc/example/model2.tgf');
+
+graph3.export('dot', 'filename', 'doc/example/model3.dot');
+graph3.export('gml', 'filename', 'doc/example/model3.gml');
+graph3.export('graphml', 'filename', 'doc/example/model3.xml');
+graph3.export('tgf', 'filename', 'doc/example/model3.tgf');
+
+model4.export('matlab', 'filename', 'doc/example/model4.m');
+model4.export('R-BoolNet', 'filename', 'doc/example/model4.bn');
+model4.export('sbml', 'filename', 'doc/example/model4.xml');
+
+model5.export('matlab', 'filename', 'doc/example/model5.m');
+model5.export('sbml', 'filename', 'doc/example/model5.xml');
+
+model6.export('matlab', 'filename', 'doc/example/model5.m');
+model6.export('sbml', 'filename', 'doc/example/model5.xml');
