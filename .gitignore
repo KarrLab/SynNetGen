@@ -4,3 +4,6 @@ tmp/
 
 #auto-documentation
 doc/m2html/*
+
+#examples
+doc/example
