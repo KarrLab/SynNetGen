@@ -35,13 +35,19 @@ if ~exist('tmp', 'dir')
 end
 
 %% compile documentation
-%create output directory
+%create output directories
+if exist('doc', 'dir')
+    mkdir('doc');
+end
+
 if exist('doc/m2html', 'dir')
     rmdir('doc/m2html', 's');
 end
 mkdir('doc/m2html');
 
-%generate documentation
+%TODO: generate overview diagram
+
+%generate source documentation
 baseDirAbs = fileparts(mfilename('fullpath'));
 tmp = strsplit(baseDirAbs, filesep);
 baseDirParent = strjoin(tmp(1:end-1), filesep);

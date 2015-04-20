@@ -28,6 +28,8 @@ classdef PipelineTest < matlab.unittest.TestCase
             plot(gca, 0:tMax, result);
             close(figHandle);
             
+            %TODO: add convert to ODE model
+            
             %browse through plots
             graphs = {
                 model1
