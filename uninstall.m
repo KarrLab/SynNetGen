@@ -21,6 +21,7 @@ rmpath(fullfile(baseDir, 'lib/graphviz4matlab'));
 rmpath(fullfile(baseDir, 'lib/graphviz4matlab/layouts'));
 rmpath(fullfile(baseDir, 'lib/graphviz4matlab/util'));
 rmpath(fullfile(baseDir, 'lib/RBN'));
+rmpath(fullfile(baseDir, 'tmp'));
 rmpath(fullfile(baseDir, 'src'));
 rmpath(baseDir);
 

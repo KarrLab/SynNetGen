@@ -29,6 +29,11 @@ for iModelType = 1:numel(modelTypes)
     end
 end
 
+%% setup temporary directory
+if ~exist('tmp', 'dir')
+    mkdir('tmp');
+end
+
 %% compile documentation
 %create output directory
 if exist('doc/m2html', 'dir')
