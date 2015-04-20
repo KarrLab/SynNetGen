@@ -10,6 +10,9 @@ classdef ExtensionRunnerTest < matlab.unittest.TestCase
             
             %print
             synnetgen.extension.ExtensionRunner.get('synnetgen.boolnet.converter', 'graph');
+            synnetgen.extension.ExtensionRunner.get('synnetgen.boolnet.converter', 'SimBiology');
+            synnetgen.extension.ExtensionRunner.get('synnetgen.boolnet.converter', 'grn-ode');
+            synnetgen.extension.ExtensionRunner.get('synnetgen.boolnet.converter', 'grn-protein-ode');
             synnetgen.extension.ExtensionRunner.get('synnetgen.boolnet.exporter', 'MATLAB');
             synnetgen.extension.ExtensionRunner.get('synnetgen.boolnet.exporter', 'R-BoolNet');
             synnetgen.extension.ExtensionRunner.get('synnetgen.boolnet.exporter', 'SBML');
@@ -35,6 +38,7 @@ classdef ExtensionRunnerTest < matlab.unittest.TestCase
             synnetgen.extension.ExtensionRunner.get('synnetgen.graph.transform', 'RemoveSigns');
             
             synnetgen.extension.ExtensionRunner.get('synnetgen.odes.converter', 'graph');
+            synnetgen.extension.ExtensionRunner.get('synnetgen.odes.converter', 'SimBiology');
             synnetgen.extension.ExtensionRunner.get('synnetgen.odes.exporter', 'MATLAB');
             synnetgen.extension.ExtensionRunner.get('synnetgen.odes.exporter', 'SBML');
             synnetgen.extension.ExtensionRunner.get('synnetgen.odes.importer', 'SBML');

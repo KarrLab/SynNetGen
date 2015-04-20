@@ -324,6 +324,14 @@ classdef BoolNetTest < matlab.unittest.TestCase
             this.verifyEqual(m, n);
         end
         
+        function testConvertToGrnOdes(this)
+            %TODO
+        end
+        
+        function testConvertToGrnProteinOdes(this)
+            %TODO
+        end
+        
         function testRBoolNetExportImport(this)
             n = synnetgen.boolnet.BoolNet();
             n.addNode('a', 'a');
