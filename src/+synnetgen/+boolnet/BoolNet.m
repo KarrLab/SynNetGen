@@ -7,7 +7,6 @@
 %  - simulate: using synchronous, asynchronous updating
 %  - isequal, eq
 %  - disp, print, plot
-%- Static methods
 %  - generate: from one of several distributions
 %  - transform: using one of several methods
 %  - convert: to other types of models
@@ -46,7 +45,7 @@ classdef BoolNet < synnetgen.Model
                 throw(MException('SynNetGen:InvalidArgument', 'Nodes must be struct with two fields id and label'));
             end
             if ~all(cellfun(@this.isValidNodeId, {nodes.id}))
-                throw(MException('SynNetGen:InvalidArgument', 'Names must be non-empty strings'));
+                throw(MException('SynNetGen:InvalidArgument', 'IDs must be non-empty strings'));
             end
             if ~all(cellfun(@this.isValidNodeLabel, {nodes.label}))
                 throw(MException('SynNetGen:InvalidArgument', 'Labels must be strings'));
@@ -67,7 +66,7 @@ classdef BoolNet < synnetgen.Model
             
             %id is non-empty unique string
             if ~this.isValidNodeId(id) || any(strcmp({this.nodes.id}, id))
-                throw(MException('SynNetGen:InvalidNodeName', 'Invalid node id ''%s''', id));
+                throw(MException('SynNetGen:InvalidNodeId', 'Invalid node id ''%s''', id));
             end
             
             %label is string
@@ -324,10 +323,10 @@ classdef BoolNet < synnetgen.Model
                 return;
             end
             
-            %same node names and labels
-            [nodeNameLabelsThis, iRowsThis] = sortrows([{this.nodes.id}' {this.nodes.label}']);
-            [nodeNameLabelsThat, iRowsThat] = sortrows([{that.nodes.id}' {that.nodes.label}']);
-            if ~isequal(nodeNameLabelsThis, nodeNameLabelsThat)
+            %same node IDs and labels
+            [nodeIdLabelsThis, iRowsThis] = sortrows([{this.nodes.id}' {this.nodes.label}']);
+            [nodeIdLabelsThat, iRowsThat] = sortrows([{that.nodes.id}' {that.nodes.label}']);
+            if ~isequal(nodeIdLabelsThis, nodeIdLabelsThat)
                 tf = false;
                 return;
             end

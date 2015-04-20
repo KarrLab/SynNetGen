@@ -3,7 +3,6 @@
 %  - copy
 %  - isequal, eq
 %  - disp, print, plot
-%- Static methods
 %  - generate: from one of several distributions
 %  - import: from one of several file formats
 %  - export: to one of several file formats

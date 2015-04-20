@@ -7,7 +7,6 @@
 %  - copy
 %  - isequal, eq
 %  - disp, print, plot
-%- Static methods
 %  - generate: from one of several distributions
 %  - transform: using one of several methods
 %  - convert: to other types of models
