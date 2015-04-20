@@ -53,10 +53,10 @@ classdef MATLABExporter < synnetgen.extension.Extension
                 differential = odes.differentials{iNode};
                 if ~isempty(differential)
                     for iNodeReplace = 1:numel(odes.nodes)
-                        differential = regexprep(differential, ['(^|[^a-zA-Z])' odes.nodes(iNodeReplace).id '([^a-zA-Z0-9_]|$)'], sprintf('$1y0(%d)$2', iNodeReplace));
+                        differential = regexprep(differential, ['(^|[^a-zA-Z0-9_])' odes.nodes(iNodeReplace).id '([^a-zA-Z0-9_]|$)'], sprintf('$1y0(%d)$2', iNodeReplace));
                     end
                     for iParamReplace = 1:numel(odes.parameters)
-                        differential = regexprep(differential, ['(^|[^a-zA-Z])' odes.parameters(iParamReplace).id '([^a-zA-Z0-9_]|$)'], sprintf('$1k(%d)$2', iParamReplace));
+                        differential = regexprep(differential, ['(^|[^a-zA-Z0-9_])' odes.parameters(iParamReplace).id '([^a-zA-Z0-9_]|$)'], sprintf('$1k(%d)$2', iParamReplace));
                     end
                     
                     fprintf(fid, 'dy(%d, :) = %s;\n', iNode, differential);
