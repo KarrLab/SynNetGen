@@ -126,6 +126,8 @@ R BoolNet | bn        | r-boolnet |          | &#x2713; |          | &#x2713; | 
 SBML      | xml       | sbml      |          | &#x2713; | &#x2713; | &#x2713; | &#x2713;
 TGF       | tgf       | tgf       | &#x2713; |          |          | &#x2713; | &#x2713;
 
+After the package is installed example files will be located in `doc/example`.
+
 Note: Boolean networks exported to SBML have "NOT" operators replaced with "-" because SimBiology doesn't support NOT.
 
 ### API docs
