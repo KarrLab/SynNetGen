@@ -277,7 +277,23 @@ classdef OdesTest < matlab.unittest.TestCase
             this.verifyLessThan((endVals(2)-expEndVals(2)).^2 ./ expEndVals(2), 1e-6);
             this.verifyLessThan((endVals(3)-expEndVals(3)).^2 ./ expEndVals(3), 1e-6);
         end
-                
+        
+        function testCalcSteadyState(this)
+            m = synnetgen.odes.Odes();
+            m.addNode('a', 'A');
+            m.addNode('b', 'B');
+            m.addParameter('k', 'K');
+            m.addParameter('l', 'L');
+            m.setDifferential('a', '-(a-k)/2');
+            m.setDifferential('b', '-(b+l)/2');
+            
+            k = 3;
+            l = 5;
+            y0 = rand(2, 1);
+            ss = m.calcSteadyState('y0', y0, 'k', [k; l], 'solver', 'ode45');
+            this.verifyLessThan(norm((ss - [k; -l]) ./ [k; -l], 2), 1e-6);
+        end
+        
         function testConvertToSimBiology(this)
             m = synnetgen.odes.Odes();
             m.addNode('a', 'A');

@@ -1,13 +1,17 @@
 %Represents ordinary differential equation (ODE) model
 %- Methods
-%  - copy
-%  - isequal, eq
-%  - disp, print, plot
+%  - addNode, addParameter, setDifferential, setDifferentials, setNodesParametersAndDifferentials
+%  - getEdges, getNodeEdges
+%  - areDifferentialsValid
+%  - simulate, calcSteadyState
 %  - generate: from one of several distributions
 %  - transform: using one of several methods
 %  - convert: to other types of models
 %  - import: from one of several file formats
 %  - export: to one of several file formats
+%  - copy
+%  - isequal, eq
+%  - disp, print, plot
 %
 %@author  Jonathan Karr, karr@mssm.edu
 %@date    2015-04-18
@@ -369,6 +373,8 @@ classdef Odes < synnetgen.Model
             %  - nodeColors
             
             opts = struct(varargin{:});
+            y = [];
+            k = [];
             if isfield(opts, 'y')
                 y = opts.y;
                 opts = rmfield(opts, 'y');
@@ -421,6 +427,60 @@ classdef Odes < synnetgen.Model
             
             [~, result] = feval(solverFunc, diffFunc, 0:tStep:tMax, y0, solverOptions, k);
             result = result';
+        end
+        
+        function steadyState = calcSteadyState(this, varargin)
+            %Calculate steady state of ODE model from state y0, k
+            
+            %parse arguments
+            ip = inputParser;
+            ip.addParameter('y0', ones(size(this.nodes)), @(x) isnumeric(x) && iscolumn(x) && numel(x) == numel(this.nodes));
+            ip.addParameter('k', ones(size(this.parameters)), @(x) isnumeric(x) && iscolumn(x) && numel(x) == numel(this.parameters));
+            ip.addParameter('tMax0', 5, @(x) isnumeric(x) && x > 0);
+            ip.addParameter('tol', 1e-6, @(x) isnumeric(x) && x > 0);
+            ip.addParameter('maxIter', 20, @(x) isnumeric(x) && x > 0 && ceil(x) == x);
+            ip.addParameter('solver', 'ode45', @(x) ischar(x) && ismember(x, {'ode113', 'ode23', 'ode45', 'ode15s', 'ode23s', 'ode23t', 'ode23tb'}));
+            ip.addParameter('solverOptions', odeset(), @isstruct);
+            ip.parse(varargin{:});
+            y0 = ip.Results.y0;
+            k = ip.Results.k;
+            tMax0 = ip.Results.tMax0;
+            tol = ip.Results.tol;
+            maxIter = ip.Results.maxIter;
+            solver = ip.Results.solver;
+            solverOptions = ip.Results.solverOptions;
+            
+            %create dy/dt function
+            diffFileName = [tempname('tmp') '.m'];
+            [~, diffFuncName] = fileparts(diffFileName);
+            
+            this.export('matlab', 'filename', diffFileName);
+            diffFunc = str2func(diffFuncName);
+            rehash();
+            
+            %get solver function
+            solverFunc = str2func(solver);
+            
+            %find steady state
+            steadyState = [];
+            tMax = tMax0;
+            endState = NaN(numel(y0), maxIter);
+            err = NaN(maxIter, 1);
+            for i = 1:maxIter
+                [~, result] = feval(solverFunc, diffFunc, (0:1e-2:1) * tMax, y0, solverOptions, k);
+                endState(:, i) = result(end, :)';
+                err(i) = norm(feval(diffFunc, tMax, endState(:, i), k) ./ endState(:, i), Inf);
+                if err(i) < tol
+                    steadyState = endState(:, i);
+                    break;
+                else
+                    tMax = 2 * tMax;
+                end
+            end
+            
+            if isempty(steadyState)
+                throw(MException('SynNetGen:DidNotConverge', 'Did not find steady state in %d iterations', maxIter));
+            end
         end
     end
     
