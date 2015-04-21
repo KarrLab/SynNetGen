@@ -59,8 +59,20 @@ figHandle = figure();
 plot(gca, 0:tStep:tMax, result);
 close(figHandle);
 
-%TODO: calculate ODE steady-state
-% steadyState = model5.calcSteadyState('y0', y5, 'k', k5);
+%calculate ODE steady-state
+model7 = synnetgen.odes.Odes();
+model7.addNode('a', 'A');
+model7.addNode('b', 'B');
+model7.addParameter('k', 'K');
+model7.addParameter('l', 'L');
+model7.setDifferential('a', '-(a-k)/2');
+model7.setDifferential('b', '-(b+l)/2');
+
+k = [3; 5];
+y0 = rand(2, 1);
+ss = model7.calcSteadyState('y0', y0, 'k', k, 'solver', 'ode45');
+
+graph7 = model7.convert('graph', 'y', y0, 'k', k);
 
 %browse through plots
 graphs = [
@@ -70,6 +82,7 @@ graphs = [
     graph4
     graph5
     graph6
+    graph7
     ];
 for i = 1:numel(graphs)
     figHandle = graphs(i).plot();
